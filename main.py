@@ -1,1 +1,4 @@
-print('hi')
+
+def print_hi():
+    print('hi')
+    
