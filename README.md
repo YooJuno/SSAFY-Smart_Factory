@@ -31,23 +31,29 @@
 
 
 ### 2️⃣ ROS2  
-**Ubuntu 22.04 ROS2 Humble**
+Dobot, RealSense D435i, Server를 ROS2 System에서 관리
+- **구현 환경 : Ubuntu 22.04 ROS2 Humble**
 
 **Node info**
+- YOLO_node (yolo_pkg)
+- Perspective_Transformer_node (rs_pkg)
+- Server_node (pjt_pkg)
+ 
 
-1. 
+**외부 launch 종속**
+- realsense2_camera rs_launch.py
+- dobot_bringup dobot_magician_control_system
 
 ### 3️⃣ RoboDK
-- **로봇 모션 시뮬레이션**
-- **Windows OS**
+로봇 모션 시뮬레이션
+- **구현 환경 : Windows OS**
 - 사용자의 클릭 위치를 로봇 기준 좌표계로 변환
 - 경로 시각화 및 동작 예측
 
 
 
 ### 4️⃣ Conveyor Belt
-- **물체 이동 자동화 구성 요소**
-- **Raspberry Pi5**
-- 물체의 위치에 따라 Dobot이 작업을 수행할 수 있도록 연동
+물체의 위치에 따라 Dobot이 작업을 수행할 수 있도록 연동
+- **구현 환경 : Raspberry Pi5**
 
 ---
