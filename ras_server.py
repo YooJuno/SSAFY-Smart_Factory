@@ -1,7 +1,7 @@
 import socket
 
 HOST = '192.168.110.110'  # 서버 IP 주소
-PORT = 20000        # 포트 번호
+PORT = 40000        # 포트 번호
 
 def main():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

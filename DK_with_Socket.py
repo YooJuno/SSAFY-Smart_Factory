@@ -565,7 +565,7 @@ def send_end_message(client_socket,msg):
 
 ########################################################################
 
-client_socket = connect_to_server('127.0.0.1',20000)
+client_socket = connect_to_server('192.168.110.110',20000)
 
 RDK.RunProgram("All_reset")
 wait_time(3)
