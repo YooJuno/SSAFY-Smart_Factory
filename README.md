@@ -68,6 +68,7 @@ DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
 
 ### 3️⃣ RoboDK
 로봇 모션 시뮬레이션
+
 **구현 환경** : Windows OS
 - ROS2 Server_node와 TCP 통신 수행
 - 컨베이어에서 panel이 검출되면 객체의 색 정보를 수신 
@@ -78,6 +79,7 @@ DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
 
 ### 4️⃣ Conveyor Belt
 물체의 위치에 따라 DOBOT이 작업을 수행할 수 있도록 연동
+
 **구현 환경** : Raspberry Pi5, Servo Motor, Step Motor, Switch
 - TCP통신을 통해 YOLO node로부터 검출 결과를 수신
 스텝 모터와 서보 모터를 결과에 따라 구동함으로써 panel 분류 수행
