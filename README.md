@@ -31,21 +31,26 @@
 - **슬라이더 바 조작:**  
   - 하단의 X, Y, Z 바를 이용하여 말단 좌표를 미세 조정
 
-
+---
 
 ### 2️⃣ ROS2  
 DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
-- **구현 환경 : Ubuntu 22.04 ROS2 Humble**
 
-**1. System info**
-- yolo_pkg
-  - YOLO_node
-- rs_pkg
-  - Perspective_Transformer_node
-- pjt_pkg
-  - Server_node
+**구현 환경 : Ubuntu 22.04 ROS2 Humble**
 
-**2. 외부 종속**
+**[ yolo_pkg ]**
+  - **YOLO_node**
+    - **/conv_space_image** topic을 구독하여 컨베이어 벨트 위의 객체를 인식 및 색 검출
+
+**[ rs_pkg ]**
+  - **Perspective_Transformer_node**
+    - realsense camera의 /camera/camera/color/image_raw 토픽을 구독하여 OpenCV Mat으로 변환
+    - **Perspective Transformation**을 수행하여 원근을 제거한 Coordinate Board 이미지를 생성. 
+
+**[ pjt_pkg ]**
+  - **Server_node**
+
+**[ 외부 종속 ]**
 - realsense2_camera **(package)**
   - /camera/camera **(node)**
 - dobot_bringup **(package)**
@@ -53,21 +58,25 @@ DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
   - /dobot_homing_srv **(node)**
   - /dobot_state_publisher **(node)**
   - /dobot_suction_cup_srv **(node)**
-  
+
+---
 
 ### 3️⃣ RoboDK
 로봇 모션 시뮬레이션
-- **구현 환경 : Windows OS**
-- 사용자의 클릭 위치를 로봇 기준 좌표계로 변환
-- 경로 시각화 및 동작 예측
+**구현 환경** : Windows OS
+- ROS2 Server_node와 TCP 통신 수행
+- 컨베이어에서 panel이 검출되면 객체의 색 정보를 수신 
+- 양품의 색인 경우 사전에 정의된 공정을 수행
 
 
+---
 
 ### 4️⃣ Conveyor Belt
 물체의 위치에 따라 DOBOT이 작업을 수행할 수 있도록 연동
-- **구현 환경 : Raspberry Pi5**
+**구현 환경** : Raspberry Pi5, Servo Motor, Step Motor, Switch
 - TCP통신을 통해 YOLO node로부터 검출 결과를 수신
-걸출 결과
-- 빨간색 : 
+스텝 모터와 서보 모터를 결과에 따라 구동함으로써 panel 분류 수행
+- 빨간색 : 1번으로 분류 (비정상)
+- 나머지 : 2번으로 분류 (양품)
 
 ---
