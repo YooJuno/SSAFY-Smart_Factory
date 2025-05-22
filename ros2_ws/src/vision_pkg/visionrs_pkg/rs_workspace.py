@@ -9,7 +9,7 @@ import numpy as np
 
 class ImageTransformer(Node):
     def __init__(self):
-        super().__init__('rs_workspace_node')
+        super().__init__('perspective_transformer_node')
         self.bridge = CvBridge()
 
         # 이미지 구독

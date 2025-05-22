@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from glob import glob
 import os
 
-package_name = 'rs_pkg'
+package_name = 'vision_pkg'
 
 setup(
     name=package_name,
@@ -23,9 +23,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'rs_workspace_node = rs_pkg.rs_workspace:main'
-            # 'rs_yolo_node = rs_cam_pkg.realsensewithYOLO:main',
-            # 'get_dist_node = rs_cam_pkg.getDistance:main'
+            'perspective_transformer_node = vision_pkg.rs_workspace:main'
+            # 'rs_yolo_node = vision_pkg.realsensewithYOLO:main',
+            # 'get_dist_node = vision_pkg.getDistance:main'
         ],
     },
 )
