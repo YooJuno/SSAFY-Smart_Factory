@@ -1,0 +1,1 @@
+/home/ssafy/SSAFY-Smart_Factory/ros2_ws/src/dobot_pkg/launch/dobot_control.launch.py

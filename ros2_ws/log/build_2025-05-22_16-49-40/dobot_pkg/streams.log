@@ -1,0 +1,29 @@
+[1.152s] Invoking command in '/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg': PYTHONPATH=/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/build --no-deps symlink_data
+[1.351s] running develop
+[1.472s] running egg_info
+[1.472s] creating dobot_pkg.egg-info
+[1.472s] writing dobot_pkg.egg-info/PKG-INFO
+[1.472s] writing dependency_links to dobot_pkg.egg-info/dependency_links.txt
+[1.472s] writing entry points to dobot_pkg.egg-info/entry_points.txt
+[1.472s] writing requirements to dobot_pkg.egg-info/requires.txt
+[1.472s] writing top-level names to dobot_pkg.egg-info/top_level.txt
+[1.473s] writing manifest file 'dobot_pkg.egg-info/SOURCES.txt'
+[1.473s] reading manifest file 'dobot_pkg.egg-info/SOURCES.txt'
+[1.474s] writing manifest file 'dobot_pkg.egg-info/SOURCES.txt'
+[1.476s] running build_ext
+[1.476s] Creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot-pkg.egg-link (link to .)
+[1.476s] Installing dobot_circle_move_node script to /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/dobot_control
+[1.476s] Installing dobot_homing_service_node script to /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/dobot_control
+[1.476s] Installing dobot_target_follower_node script to /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/dobot_control
+[1.476s] Installing pick_and_place_demo script to /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/dobot_control
+[1.476s] 
+[1.476s] Installed /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg
+[1.476s] running symlink_data
+[1.477s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/ament_index
+[1.477s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/ament_index/resource_index
+[1.477s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/ament_index/resource_index/packages
+[1.478s] symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/resource/dobot_pkg -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/ament_index/resource_index/packages
+[1.478s] symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/package.xml -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/dobot_pkg
+[1.478s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/dobot_pkg/launch
+[1.478s] symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/launch/dobot_control.launch.py -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/share/dobot_pkg/launch
+[1.512s] Invoked command in '/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg' returned '0': PYTHONPATH=/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/dobot_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/dobot_pkg/build --no-deps symlink_data

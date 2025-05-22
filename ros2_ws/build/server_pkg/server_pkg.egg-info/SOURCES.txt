@@ -1,0 +1,12 @@
+package.xml
+setup.cfg
+setup.py
+resource/server_pkg
+server_pkg/__init__.py
+server_pkg.egg-info/PKG-INFO
+server_pkg.egg-info/SOURCES.txt
+server_pkg.egg-info/dependency_links.txt
+server_pkg.egg-info/entry_points.txt
+server_pkg.egg-info/requires.txt
+server_pkg.egg-info/top_level.txt
+server_pkg.egg-info/zip-safe

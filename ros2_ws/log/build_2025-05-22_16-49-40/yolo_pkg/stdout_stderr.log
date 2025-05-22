@@ -1,0 +1,21 @@
+running develop
+running egg_info
+creating yolo_pkg.egg-info
+writing yolo_pkg.egg-info/PKG-INFO
+writing dependency_links to yolo_pkg.egg-info/dependency_links.txt
+writing entry points to yolo_pkg.egg-info/entry_points.txt
+writing requirements to yolo_pkg.egg-info/requires.txt
+writing top-level names to yolo_pkg.egg-info/top_level.txt
+writing manifest file 'yolo_pkg.egg-info/SOURCES.txt'
+reading manifest file 'yolo_pkg.egg-info/SOURCES.txt'
+writing manifest file 'yolo_pkg.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/lib/python3.10/site-packages/yolo-pkg.egg-link (link to .)
+
+Installed /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg
+running symlink_data
+creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index
+creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index/resource_index
+creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/resource/yolo_pkg -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/package.xml -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/yolo_pkg

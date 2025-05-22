@@ -1,0 +1,12 @@
+package.xml
+setup.cfg
+setup.py
+resource/yolo_pkg
+yolo_pkg/__init__.py
+yolo_pkg.egg-info/PKG-INFO
+yolo_pkg.egg-info/SOURCES.txt
+yolo_pkg.egg-info/dependency_links.txt
+yolo_pkg.egg-info/entry_points.txt
+yolo_pkg.egg-info/requires.txt
+yolo_pkg.egg-info/top_level.txt
+yolo_pkg.egg-info/zip-safe

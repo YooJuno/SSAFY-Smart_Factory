@@ -1,0 +1,22 @@
+running develop
+running egg_info
+creating vision_pkg.egg-info
+writing vision_pkg.egg-info/PKG-INFO
+writing dependency_links to vision_pkg.egg-info/dependency_links.txt
+writing entry points to vision_pkg.egg-info/entry_points.txt
+writing requirements to vision_pkg.egg-info/requires.txt
+writing top-level names to vision_pkg.egg-info/top_level.txt
+writing manifest file 'vision_pkg.egg-info/SOURCES.txt'
+reading manifest file 'vision_pkg.egg-info/SOURCES.txt'
+writing manifest file 'vision_pkg.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/lib/python3.10/site-packages/vision-pkg.egg-link (link to .)
+Installing perspective_transformer_node script to /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/lib/rs_pkg
+
+Installed /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/vision_pkg
+running symlink_data
+creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/share/ament_index
+creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/share/ament_index/resource_index
+creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/vision_pkg/resource/vision_pkg -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/vision_pkg/package.xml -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/vision_pkg/share/vision_pkg

@@ -1,0 +1,3 @@
+[console_scripts]
+perspective_transformer_node = vision_pkg.rs_workspace:main
+

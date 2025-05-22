@@ -1,0 +1,23 @@
+[1.142s] Invoking command in '/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg': PYTHONPATH=/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/build --no-deps symlink_data
+[1.341s] running develop
+[1.460s] running egg_info
+[1.460s] creating yolo_pkg.egg-info
+[1.460s] writing yolo_pkg.egg-info/PKG-INFO
+[1.460s] writing dependency_links to yolo_pkg.egg-info/dependency_links.txt
+[1.460s] writing entry points to yolo_pkg.egg-info/entry_points.txt
+[1.461s] writing requirements to yolo_pkg.egg-info/requires.txt
+[1.461s] writing top-level names to yolo_pkg.egg-info/top_level.txt
+[1.461s] writing manifest file 'yolo_pkg.egg-info/SOURCES.txt'
+[1.462s] reading manifest file 'yolo_pkg.egg-info/SOURCES.txt'
+[1.463s] writing manifest file 'yolo_pkg.egg-info/SOURCES.txt'
+[1.464s] running build_ext
+[1.465s] Creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/lib/python3.10/site-packages/yolo-pkg.egg-link (link to .)
+[1.465s] 
+[1.465s] Installed /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg
+[1.465s] running symlink_data
+[1.465s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index
+[1.465s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index/resource_index
+[1.465s] creating /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index/resource_index/packages
+[1.465s] symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/resource/yolo_pkg -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/ament_index/resource_index/packages
+[1.465s] symbolically linking /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/package.xml -> /home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/share/yolo_pkg
+[1.514s] Invoked command in '/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg' returned '0': PYTHONPATH=/home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/SSAFY-Smart_Factory/ros2_ws/install/yolo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ssafy/SSAFY-Smart_Factory/ros2_ws/build/yolo_pkg/build --no-deps symlink_data
