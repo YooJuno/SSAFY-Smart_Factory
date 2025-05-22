@@ -49,6 +49,7 @@ DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
 
 **[ server_pkg ]**
   - **/server_node**
+    - 각 노드와의 데이터 입출력 및 HTTP Client와의 통신을 담당
 
 **[ dobot_pkg ]**
   - **/target_follower_node**
