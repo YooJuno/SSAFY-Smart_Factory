@@ -39,16 +39,20 @@ DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
 **구현 환경 : Ubuntu 22.04 ROS2 Humble**
 
 **[ yolo_pkg ]**
-  - **YOLO_node**
+  - **/yolo_node**
     - **/conv_space_image** topic을 구독하여 컨베이어 벨트 위의 객체를 인식 및 색 검출
 
 **[ vision_pkg ]**
-  - **Perspective_Transformer_node**
+  - **/perspective_transformer_node**
     - realsense camera의 /camera/camera/color/image_raw 토픽을 구독하여 OpenCV Mat으로 변환
     - **Perspective Transformation**을 수행하여 원근을 제거한 Coordinate Board 이미지를 생성. 
 
 **[ server_pkg ]**
-  - **Server_node**
+  - **/server_node**
+
+**[ dobot_pkg ]**
+  - **/target_follower_node**
+    - DOBOT의 초기화(Homing) 및 움직임 제어
 
 **[ 외부 종속 ]**
 - realsense2_camera **(package)**
