@@ -1,0 +1,39 @@
+/* test */
+main,
+footer {
+    border: 1px solid black;
+}
+
+/* setting */
+body {
+    background-color: white;
+}
+
+.root {
+    width: 98vw;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+/* layout */
+main {
+    flex: 10;
+    border: 1px solid black;
+}
+
+footer {
+    flex: 4
+}
+
+/* main */
+main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space;
+
+}
