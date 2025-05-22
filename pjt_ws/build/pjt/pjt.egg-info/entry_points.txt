@@ -1,0 +1,3 @@
+[console_scripts]
+pjt_run_node = pjt.pjt_run:main
+

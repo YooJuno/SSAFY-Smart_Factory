@@ -1,0 +1,48 @@
+running egg_info
+creating ../../build/rpi_pkg/rpi_pkg.egg-info
+writing ../../build/rpi_pkg/rpi_pkg.egg-info/PKG-INFO
+writing dependency_links to ../../build/rpi_pkg/rpi_pkg.egg-info/dependency_links.txt
+writing entry points to ../../build/rpi_pkg/rpi_pkg.egg-info/entry_points.txt
+writing requirements to ../../build/rpi_pkg/rpi_pkg.egg-info/requires.txt
+writing top-level names to ../../build/rpi_pkg/rpi_pkg.egg-info/top_level.txt
+writing manifest file '../../build/rpi_pkg/rpi_pkg.egg-info/SOURCES.txt'
+reading manifest file '../../build/rpi_pkg/rpi_pkg.egg-info/SOURCES.txt'
+writing manifest file '../../build/rpi_pkg/rpi_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build
+creating /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib
+creating /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+copying rpi_pkg/servo.py -> /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+copying rpi_pkg/conveyor.py -> /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+copying rpi_pkg/step_motor.py -> /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+copying rpi_pkg/switch.py -> /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+copying rpi_pkg/__init__.py -> /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+copying rpi_pkg/rpi_client.py -> /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg
+running install
+running install_lib
+creating /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg/servo.py -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg/conveyor.py -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg/step_motor.py -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg/switch.py -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg/__init__.py -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/build/lib/rpi_pkg/rpi_client.py -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg/servo.py to servo.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg/conveyor.py to conveyor.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg/step_motor.py to step_motor.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg/switch.py to switch.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg/rpi_client.py to rpi_client.cpython-310.pyc
+running install_data
+creating /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/share/ament_index
+creating /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/share/ament_index/resource_index
+creating /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/share/ament_index/resource_index/packages
+copying resource/rpi_pkg -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/share/ament_index/resource_index/packages
+copying package.xml -> /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/share/rpi_pkg
+creating /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/share/rpi_pkg/launch
+running install_egg_info
+Copying ../../build/rpi_pkg/rpi_pkg.egg-info to /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/python3.10/site-packages/rpi_pkg-0.0.0-py3.10.egg-info
+running install_scripts
+Installing conveyor_node script to /home/ssafy/Workspaces/pjt_ws/install/rpi_pkg/lib/rpi_pkg
+writing list of installed files to '/home/ssafy/Workspaces/pjt_ws/build/rpi_pkg/install.log'

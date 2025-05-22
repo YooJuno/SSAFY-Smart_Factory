@@ -1,0 +1,49 @@
+running egg_info
+creating ../../build/dobot_pkg/dobot_pkg.egg-info
+writing ../../build/dobot_pkg/dobot_pkg.egg-info/PKG-INFO
+writing dependency_links to ../../build/dobot_pkg/dobot_pkg.egg-info/dependency_links.txt
+writing entry points to ../../build/dobot_pkg/dobot_pkg.egg-info/entry_points.txt
+writing requirements to ../../build/dobot_pkg/dobot_pkg.egg-info/requires.txt
+writing top-level names to ../../build/dobot_pkg/dobot_pkg.egg-info/top_level.txt
+writing manifest file '../../build/dobot_pkg/dobot_pkg.egg-info/SOURCES.txt'
+reading manifest file '../../build/dobot_pkg/dobot_pkg.egg-info/SOURCES.txt'
+writing manifest file '../../build/dobot_pkg/dobot_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build
+creating /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib
+creating /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control
+copying dobot_control/target_follower.py -> /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control
+copying dobot_control/homing.py -> /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control
+copying dobot_control/pickandplace.py -> /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control
+copying dobot_control/circel_move.py -> /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control
+copying dobot_control/__init__.py -> /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control
+running install
+running install_lib
+creating /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control
+copying /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control/target_follower.py -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control
+copying /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control/homing.py -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control
+copying /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control/pickandplace.py -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control
+copying /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control/circel_move.py -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control
+copying /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build/lib/dobot_control/__init__.py -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control/target_follower.py to target_follower.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control/homing.py to homing.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control/pickandplace.py to pickandplace.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control/circel_move.py to circel_move.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_control/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/ament_index
+creating /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/ament_index/resource_index
+creating /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/ament_index/resource_index/packages
+copying resource/dobot_pkg -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/ament_index/resource_index/packages
+copying package.xml -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/dobot_pkg
+creating /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/dobot_pkg/launch
+copying launch/dobot_control.launch.py -> /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/share/dobot_pkg/launch
+running install_egg_info
+Copying ../../build/dobot_pkg/dobot_pkg.egg-info to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_pkg-0.0.0-py3.10.egg-info
+running install_scripts
+Installing dobot_circle_move_node script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+Installing dobot_homing_service_node script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+Installing dobot_target_follower_node script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+Installing pick_and_place_demo script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+writing list of installed files to '/home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/install.log'

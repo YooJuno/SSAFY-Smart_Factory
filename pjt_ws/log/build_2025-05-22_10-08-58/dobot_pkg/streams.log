@@ -1,0 +1,24 @@
+[1.398s] Invoking command in '/home/ssafy/Workspaces/pjt_ws/src/dobot_pkg': PYTHONPATH=/home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/dobot_pkg build --build-base /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build install --record /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/install.log --single-version-externally-managed install_data
+[1.589s] running egg_info
+[1.589s] writing ../../build/dobot_pkg/dobot_pkg.egg-info/PKG-INFO
+[1.590s] writing dependency_links to ../../build/dobot_pkg/dobot_pkg.egg-info/dependency_links.txt
+[1.590s] writing entry points to ../../build/dobot_pkg/dobot_pkg.egg-info/entry_points.txt
+[1.590s] writing requirements to ../../build/dobot_pkg/dobot_pkg.egg-info/requires.txt
+[1.590s] writing top-level names to ../../build/dobot_pkg/dobot_pkg.egg-info/top_level.txt
+[1.591s] reading manifest file '../../build/dobot_pkg/dobot_pkg.egg-info/SOURCES.txt'
+[1.592s] writing manifest file '../../build/dobot_pkg/dobot_pkg.egg-info/SOURCES.txt'
+[1.592s] running build
+[1.592s] running build_py
+[1.592s] running install
+[1.592s] running install_lib
+[1.593s] running install_data
+[1.593s] running install_egg_info
+[1.594s] removing '/home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[1.595s] Copying ../../build/dobot_pkg/dobot_pkg.egg-info to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages/dobot_pkg-0.0.0-py3.10.egg-info
+[1.595s] running install_scripts
+[1.610s] Installing dobot_circle_move_node script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+[1.610s] Installing dobot_homing_service_node script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+[1.610s] Installing dobot_target_follower_node script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+[1.610s] Installing pick_and_place_demo script to /home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/dobot_control
+[1.611s] writing list of installed files to '/home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/install.log'
+[1.644s] Invoked command in '/home/ssafy/Workspaces/pjt_ws/src/dobot_pkg' returned '0': PYTHONPATH=/home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/Workspaces/pjt_ws/install/dobot_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/dobot_pkg build --build-base /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/build install --record /home/ssafy/Workspaces/pjt_ws/build/dobot_pkg/install.log --single-version-externally-managed install_data

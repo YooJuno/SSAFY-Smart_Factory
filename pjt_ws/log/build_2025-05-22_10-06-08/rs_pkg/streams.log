@@ -1,0 +1,43 @@
+[1.324s] Invoking command in '/home/ssafy/Workspaces/pjt_ws/src/rs_pkg': PYTHONPATH=/home/ssafy/Workspaces/pjt_ws/build/rs_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rs_pkg build --build-base /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build install --record /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/install.log --single-version-externally-managed install_data
+[1.511s] running egg_info
+[1.511s] creating ../../build/rs_pkg/rs_pkg.egg-info
+[1.511s] writing ../../build/rs_pkg/rs_pkg.egg-info/PKG-INFO
+[1.511s] writing dependency_links to ../../build/rs_pkg/rs_pkg.egg-info/dependency_links.txt
+[1.512s] writing entry points to ../../build/rs_pkg/rs_pkg.egg-info/entry_points.txt
+[1.512s] writing requirements to ../../build/rs_pkg/rs_pkg.egg-info/requires.txt
+[1.512s] writing top-level names to ../../build/rs_pkg/rs_pkg.egg-info/top_level.txt
+[1.512s] writing manifest file '../../build/rs_pkg/rs_pkg.egg-info/SOURCES.txt'
+[1.513s] reading manifest file '../../build/rs_pkg/rs_pkg.egg-info/SOURCES.txt'
+[1.513s] writing manifest file '../../build/rs_pkg/rs_pkg.egg-info/SOURCES.txt'
+[1.513s] running build
+[1.513s] running build_py
+[1.513s] creating /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build
+[1.513s] creating /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib
+[1.513s] creating /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+[1.513s] copying rs_pkg/getDistance.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+[1.513s] copying rs_pkg/rs_workspace.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+[1.513s] copying rs_pkg/realsensewithYOLO.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+[1.513s] copying rs_pkg/__init__.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+[1.513s] running install
+[1.514s] running install_lib
+[1.514s] creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+[1.514s] copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/getDistance.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+[1.514s] copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/rs_workspace.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+[1.514s] copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/realsensewithYOLO.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+[1.515s] copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/__init__.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+[1.515s] byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/getDistance.py to getDistance.cpython-310.pyc
+[1.515s] byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/rs_workspace.py to rs_workspace.cpython-310.pyc
+[1.516s] byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/realsensewithYOLO.py to realsensewithYOLO.cpython-310.pyc
+[1.517s] byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/__init__.py to __init__.cpython-310.pyc
+[1.517s] running install_data
+[1.517s] creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index
+[1.517s] creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index/resource_index
+[1.517s] creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index/resource_index/packages
+[1.517s] copying resource/rs_pkg -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index/resource_index/packages
+[1.517s] copying package.xml -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/rs_pkg
+[1.518s] running install_egg_info
+[1.518s] Copying ../../build/rs_pkg/rs_pkg.egg-info to /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg-0.0.0-py3.10.egg-info
+[1.519s] running install_scripts
+[1.534s] Installing rs_workspace_node script to /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/rs_pkg
+[1.534s] writing list of installed files to '/home/ssafy/Workspaces/pjt_ws/build/rs_pkg/install.log'
+[1.558s] Invoked command in '/home/ssafy/Workspaces/pjt_ws/src/rs_pkg' returned '0': PYTHONPATH=/home/ssafy/Workspaces/pjt_ws/build/rs_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/rs_pkg build --build-base /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build install --record /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/install.log --single-version-externally-managed install_data

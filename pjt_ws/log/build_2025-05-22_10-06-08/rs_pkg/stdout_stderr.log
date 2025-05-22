@@ -1,0 +1,41 @@
+running egg_info
+creating ../../build/rs_pkg/rs_pkg.egg-info
+writing ../../build/rs_pkg/rs_pkg.egg-info/PKG-INFO
+writing dependency_links to ../../build/rs_pkg/rs_pkg.egg-info/dependency_links.txt
+writing entry points to ../../build/rs_pkg/rs_pkg.egg-info/entry_points.txt
+writing requirements to ../../build/rs_pkg/rs_pkg.egg-info/requires.txt
+writing top-level names to ../../build/rs_pkg/rs_pkg.egg-info/top_level.txt
+writing manifest file '../../build/rs_pkg/rs_pkg.egg-info/SOURCES.txt'
+reading manifest file '../../build/rs_pkg/rs_pkg.egg-info/SOURCES.txt'
+writing manifest file '../../build/rs_pkg/rs_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build
+creating /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib
+creating /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+copying rs_pkg/getDistance.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+copying rs_pkg/rs_workspace.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+copying rs_pkg/realsensewithYOLO.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+copying rs_pkg/__init__.py -> /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg
+running install
+running install_lib
+creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/getDistance.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/rs_workspace.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/realsensewithYOLO.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+copying /home/ssafy/Workspaces/pjt_ws/build/rs_pkg/build/lib/rs_pkg/__init__.py -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/getDistance.py to getDistance.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/rs_workspace.py to rs_workspace.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/realsensewithYOLO.py to realsensewithYOLO.cpython-310.pyc
+byte-compiling /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index
+creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index/resource_index
+creating /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index/resource_index/packages
+copying resource/rs_pkg -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/ament_index/resource_index/packages
+copying package.xml -> /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/share/rs_pkg
+running install_egg_info
+Copying ../../build/rs_pkg/rs_pkg.egg-info to /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/python3.10/site-packages/rs_pkg-0.0.0-py3.10.egg-info
+running install_scripts
+Installing rs_workspace_node script to /home/ssafy/Workspaces/pjt_ws/install/rs_pkg/lib/rs_pkg
+writing list of installed files to '/home/ssafy/Workspaces/pjt_ws/build/rs_pkg/install.log'
