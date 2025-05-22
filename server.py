@@ -4,26 +4,16 @@ import threading
 HOST = '192.168.110.110'
 PORTS = [20000, 40000]
 
+clients = {}
+both_connected = threading.Event()
+lock = threading.Lock()
+
 def handle_client(client_socket, addr, client_id):
     print(f"[{client_id}] 클라이언트 연결됨: {addr}")
-    try:
-        while True:
-            msg = input(f"[{client_id}] 보낼 색상(red, white, blue 등) 입력 (종료: exit): ").strip()
-            if msg.lower() == "exit":
-                print(f"[{client_id}] 서버를 종료합니다.")
-                break
-            if not msg:
-                continue  # 빈 입력 무시
-
-            client_socket.sendall(msg.encode('utf-8'))
-            print(f"[{client_id}] 전송 완료: {msg}")
-
-    except Exception as e:
-        print(f"[{client_id}] 에러 발생: {e}")
-
-    finally:
-        client_socket.close()
-        print(f"[{client_id}] 클라이언트 소켓 종료.")
+    with lock:
+        clients[client_id] = client_socket
+        if len(clients) == len(PORTS):
+            both_connected.set()  # 두 클라이언트 모두 연결 시 이벤트 발생
 
 def server_thread(port, client_id):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,8 +24,8 @@ def server_thread(port, client_id):
 
     client_socket, addr = server_socket.accept()
     handle_client(client_socket, addr, client_id)
-    server_socket.close()
-    print(f"[{client_id}] 서버 소켓 종료.")
+
+    both_connected.wait()  # 두 클라이언트 모두 연결될 때까지 대기
 
 def main():
     threads = []
@@ -43,8 +33,35 @@ def main():
         t = threading.Thread(target=server_thread, args=(port, f"PORT{port}"))
         t.start()
         threads.append(t)
-    for t in threads:
-        t.join()
+
+    both_connected.wait()  # 두 클라이언트 모두 연결될 때까지 대기
+    print("Both clients connected. Ready to send data.")
+
+    try:
+        while True:
+            msg = input("보낼 색상(red, white, blue 등) 입력 (종료: exit): ").strip()
+            if msg.lower() == "exit":
+                print("서버를 종료합니다.")
+                break
+            if not msg:
+                continue
+
+            with lock:
+                for client_id, client_socket in clients.items():
+                    try:
+                        client_socket.sendall(msg.encode('utf-8'))
+                        print(f"[{client_id}] 전송 완료: {msg}")
+                    except Exception as e:
+                        print(f"[{client_id}] 전송 오류: {e}")
+
+    except Exception as e:
+        print(f"에러 발생: {e}")
+
+    finally:
+        with lock:
+            for client_socket in clients.values():
+                client_socket.close()
+        print("모든 클라이언트 소켓 종료.")
 
 if __name__ == "__main__":
     main()
