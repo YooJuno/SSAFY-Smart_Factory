@@ -1,3 +1,0 @@
-[console_scripts]
-conveyor_node = rpi_pkg.conveyor:main
-

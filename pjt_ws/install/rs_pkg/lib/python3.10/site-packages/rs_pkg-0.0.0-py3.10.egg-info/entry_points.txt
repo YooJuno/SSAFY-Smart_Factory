@@ -1,3 +1,0 @@
-[console_scripts]
-rs_workspace_node = rs_pkg.rs_workspace:main
-
