@@ -5,14 +5,13 @@ from geometry_msgs.msg import Point
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-
+import time
 
 class ImageTransformer(Node):
     def __init__(self):
         super().__init__('perspective_transformer_node')
         self.bridge = CvBridge()
 
-        # 이미지 구독
         self.subscription = self.create_subscription(
             Image,
             '/camera/camera/color/image_raw',
@@ -20,21 +19,20 @@ class ImageTransformer(Node):
             10
         )
 
+        self.prev_time = 0
+
         # 좌표 퍼블리셔
         self.publisher_point = self.create_publisher(Point, '/target_pos', 10)
         self.publisher_image = self.create_publisher(Image, '/conv_space_image', 10)
 
         self.points_coordinate = []
-        # self.points_conveyor = []
 
         self.original_image = None
         self.latest_frame = None
 
         self.transform_matrix_coordinate = None
-        # self.transform_matrix_conveyor = None
 
         self.warped_size_coordinate = (290 * 4, 210 * 4)  # (width, height)
-        # self.warped_size_conveyor = (20 * 17 * 2, 20 * 7 * 2)  # (width, height)
 
         self.pix_x, self.pix_y = self.warped_size_coordinate[0]/2, self.warped_size_coordinate[1]/2
 
@@ -72,29 +70,11 @@ class ImageTransformer(Node):
                 f'[Transformed] Pos : (y : {self.x:.2f}, x : {self.y:.2f})'
             )
 
-            # 퍼블리시
             point = Point()
             point.x = float(self.x)
             point.y = float(self.y)
             point.z = 0.0
             self.publisher_point.publish(point)
-
-        # if event == cv2.EVENT_RBUTTONDOWN and len(self.points_conveyor) < 4:
-        #     self.points_conveyor.append([x, y])
-        #     self.get_logger().info(f'Point {len(self.points_conveyor)}: ({x}, {y})')
-
-        #     if len(self.points_conveyor) == 4:
-        #         width, height = self.warped_size_conveyor
-        #         pts_src = np.array(self.points_conveyor, dtype='float32')
-        #         pts_dst = np.array([
-        #             [0, 0],
-        #             [width - 1, 0],
-        #             [width - 1, height - 1],
-        #             [0, height - 1]
-        #         ], dtype='float32')
-
-        #         self.transform_matrix_conveyor = cv2.getPerspectiveTransform(pts_src, pts_dst)
-        #         self.points_conveyor = []
 
     def pixel_to_real(self, x, y):
         width, height = self.warped_size_coordinate
@@ -136,20 +116,14 @@ class ImageTransformer(Node):
                 cv2.circle(warped_coordinate, (int(self.pix_x), int(self.pix_y)), 3, (0, 0, 255), 3)
 
                 cv2.imshow('Transformed_Coordinate', warped_coordinate)
-
                 cv2.imshow('Transformed_Conveyor', warped_conveyor)
                 
-                ros_image = self.bridge.cv2_to_imgmsg(warped_conveyor, encoding='bgr8')  # 또는 warped_coordinate
-                self.publisher_image.publish(ros_image)
-
-                # if self.transform_matrix_conveyor is not None:
-                #     width, height = self.warped_size_conveyor
-
-                #     warped_conveyor = cv2.warpPerspective(image, self.transform_matrix_conveyor, (width, height))
-
-                #     cv2.imshow('Transformed_Conveyor', warped_conveyor)
-
-
+                # 1초에 한 장 씩 pub
+                cur_time = time.time()
+                if cur_time - self.prev_time >= 1.0:
+                    conv_image = self.bridge.cv2_to_imgmsg(warped_conveyor, encoding='bgr8')
+                    self.publisher_image.publish(conv_image)
+                    self.prev_time = cur_time
 
         except Exception as e:
             self.get_logger().error(f"CV Bridge error: {e}")
