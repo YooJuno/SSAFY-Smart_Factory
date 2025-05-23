@@ -1,6 +1,8 @@
 from setuptools import find_packages, setup
 from glob import glob
 import os
+from glob import glob
+import os
 
 package_name = 'server_pkg'
 
@@ -23,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'server_node = server_pkg.server:main'
+            # 'server_node = server_pkg.server:main'
         ],
     },
 )
