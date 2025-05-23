@@ -1,13 +1,22 @@
 import rclpy
 from rclpy.node import Node
+
+from std_msgs.msg import Bool
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Bool
-import math
-import time
 from sensor_msgs.msg import Image 
 from std_msgs.msg import String
 from geometry_msgs.msg import Point
+
+from cv_bridge import CvBridge
+import threading, time, math, cv2
+
+from flask import Flask, Response
+
+app = Flask(__name__)
+
+ROS_DELAY_INTERVAL = 0
+server_node = None
 
 def add_offset(pose):
     a_tan = math.atan2(pose[0], pose[1])
@@ -19,19 +28,22 @@ def add_offset(pose):
 
     return pose[0] + offset_x, pose[1] + offset_y, pose[2] - offset_z
 
-class DobotServer(Node):
+class DobotServerNode(Node):
     def __init__(self):
-        super().__init__('dobot_status_server')
+        super().__init__('server_node')
 
         self.create_subscription(JointState, '/dobot_joint_states', self.joint_callback, 10)
         self.create_subscription(PoseStamped, '/dobot_TCP', self.tcp_callback, 10)
         self.create_subscription(Bool, '/gripper_status_rviz', self.suction_callback, 10)
-        self.create_subscription(Image, '/coord_space_image', self.image_callback, 10)
+        self.create_subscription(Image, '/coord_space_image', self.coord_board_image_callback, 10)
         self.create_subscription(String, '/detection_results', self.yolo_callback, 10)
 
         self.publisher_target_point = self.create_publisher(Point, '/target_pos', 10)
 
-
+        self.lock = threading.Lock()
+        self.bridge = CvBridge()
+        self.latest_frame = None
+        
     def joint_callback(self, msg):
         for name, pos in zip(msg.name, msg.position):
             self.get_logger().info(f'{name}: {math.degrees(pos):.2f} deg')
@@ -42,7 +54,7 @@ class DobotServer(Node):
         joint3 : -15 ~ 80 (degree)
         joint4 : 110 ~ 170 (degree)
         '''
-        time.sleep(0.05)
+        time.sleep(ROS_DELAY_INTERVAL)
 
     def tcp_callback(self, msg):
         pose = (msg.pose.position.x*1000, msg.pose.position.y*1000, msg.pose.position.z*1000)
@@ -57,26 +69,62 @@ class DobotServer(Node):
         Z : -130 ~ 113 (mm)
         '''
 
-        time.sleep(0.05)
+        time.sleep(ROS_DELAY_INTERVAL)
 
     def suction_callback(self, msg):
         self.get_logger().info(f'Suction: {"ON" if msg.data else "OFF"}')
-        time.sleep(0.05)
+        time.sleep(ROS_DELAY_INTERVAL)
 
-    def image_callback(self, msg):
-        
-        time.sleep(0.05)
+    def coord_board_image_callback(self, msg):
+        try:
+            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            cv_image = cv2.resize(cv_image, (cv_image.shape[1]//2, cv_image.shape[0]//2))
+            with self.lock:
+                self.latest_frame = cv_image.copy()
+            cv2.imshow("RealSense Color Stream", cv_image)
+            cv2.waitKey(1)
+        except Exception as e:
+            self.get_logger().error(f"CV conversion failed: {e}")
+        time.sleep(ROS_DELAY_INTERVAL)
 
     def yolo_callback(self, msg):
         
-        time.sleep(0.05)
+        time.sleep(ROS_DELAY_INTERVAL)
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = DobotServer()
-    rclpy.spin(node)
-    node.destroy_node()
+    def get_jpeg_image(self):
+        global server_node
+        with self.lock:
+            if self.latest_frame is None:
+                return None
+            success, jpeg = cv2.imencode('.jpg', self.latest_frame)
+            if success:
+                return jpeg.tobytes()
+            return None
+
+
+@app.route('/camera/image')
+def get_image():
+    image = server_node.get_jpeg_image()
+    if image:
+        return Response(response=image, content_type='image/jpeg')
+    else:
+        return Response("No image available", status=404)
+
+
+def ros_thread_main():
+    global server_node
+    rclpy.init()
+    server_node = DobotServerNode()
+    rclpy.spin(server_node)
+    server_node.destroy_node()
     rclpy.shutdown()
+
+def main():
+    ros_thread = threading.Thread(target=ros_thread_main, daemon=True)
+    ros_thread.start()
+
+    app.run(host='0.0.0.0', port=8000)
+
 
 if __name__ == '__main__':
     main()
