@@ -79,7 +79,8 @@ class TargetPublisher(Node):
             }
         ]
         response = client.responses.create(
-            model="gpt-4.1-nano",
+            # model="gpt-4.1-nano",
+            model='gpt-4o-mini',
             input=messages
         )
 
@@ -96,3 +97,10 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
+
+'''
+input ex
+
+y는 250, x는 0, z는 30으로 가게 해줘 그리고 y는 250, x는 100, z는 30으로 가게 해줘
+'''
