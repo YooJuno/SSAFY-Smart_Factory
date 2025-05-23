@@ -9,14 +9,18 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Point
 
 from cv_bridge import CvBridge
-import threading, time, math, cv2
+import threading, time, math, cv2, socket
 
 from flask import Flask, Response
+
 
 app = Flask(__name__)
 
 ROS_DELAY_INTERVAL = 0
 server_node = None
+
+TCP_HOST = '192.168.110.110'  # 서버 IP 주소
+TCP_PORT = 40000              # 포트 번호
 
 def add_offset(pose):
     a_tan = math.atan2(pose[0], pose[1])
@@ -27,6 +31,36 @@ def add_offset(pose):
     offset_z = 68.0
 
     return pose[0] + offset_x, pose[1] + offset_y, pose[2] - offset_z
+
+def tcp_server_main():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind((TCP_HOST, TCP_PORT))
+    server_socket.listen(1)
+    print(f"[TCP] 서버가 {TCP_HOST}:{TCP_PORT}에서 대기 중입니다...")
+
+    client_socket, addr = server_socket.accept()
+    print(f"[TCP] 클라이언트 연결됨: {addr}")
+
+    try:
+        while True:
+            msg = input("클라이언트로 보낼 색상(red, white, blue 등) 입력 (종료: exit): ").strip()
+            if msg.lower() == "exit":
+                print("[TCP] 서버를 종료합니다.")
+                break
+            if not msg:
+                continue  # 빈 입력 무시
+
+            client_socket.sendall(msg.encode('utf-8'))
+            print(f"[TCP] 전송 완료: {msg}")
+
+    except Exception as e:
+        print(f"[TCP] 에러 발생: {e}")
+
+    finally:
+        client_socket.close()
+        server_socket.close()
+        print("[TCP] 서버 소켓 종료.")
 
 class DobotServerNode(Node):
     def __init__(self):
@@ -122,6 +156,9 @@ def ros_thread_main():
 def main():
     ros_thread = threading.Thread(target=ros_thread_main, daemon=True)
     ros_thread.start()
+
+    tcp_thread = threading.Thread(target=tcp_server_main, daemon=True)
+    tcp_thread.start()
 
     app.run(host='0.0.0.0', port=8000)
 
