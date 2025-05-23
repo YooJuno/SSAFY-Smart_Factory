@@ -1,0 +1,38 @@
+[0.954s] Invoking command in '/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/src/yolo_pkg': PYTHONPATH=/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/yolo_pkg build --build-base /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build install --record /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/install.log --single-version-externally-managed install_data
+[1.243s] running egg_info
+[1.244s] creating ../../build/yolo_pkg/yolo_pkg.egg-info
+[1.259s] writing ../../build/yolo_pkg/yolo_pkg.egg-info/PKG-INFO
+[1.260s] writing dependency_links to ../../build/yolo_pkg/yolo_pkg.egg-info/dependency_links.txt
+[1.260s] writing entry points to ../../build/yolo_pkg/yolo_pkg.egg-info/entry_points.txt
+[1.260s] writing requirements to ../../build/yolo_pkg/yolo_pkg.egg-info/requires.txt
+[1.260s] writing top-level names to ../../build/yolo_pkg/yolo_pkg.egg-info/top_level.txt
+[1.260s] writing manifest file '../../build/yolo_pkg/yolo_pkg.egg-info/SOURCES.txt'
+[1.293s] reading manifest file '../../build/yolo_pkg/yolo_pkg.egg-info/SOURCES.txt'
+[1.294s] writing manifest file '../../build/yolo_pkg/yolo_pkg.egg-info/SOURCES.txt'
+[1.294s] running build
+[1.294s] running build_py
+[1.294s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build
+[1.294s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build/lib
+[1.294s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build/lib/yolo_pkg
+[1.294s] copying yolo_pkg/__init__.py -> /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build/lib/yolo_pkg
+[1.295s] copying yolo_pkg/yolo.py -> /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build/lib/yolo_pkg
+[1.295s] running install
+[1.301s] running install_lib
+[1.318s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages/yolo_pkg
+[1.318s] copying /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build/lib/yolo_pkg/__init__.py -> /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages/yolo_pkg
+[1.318s] copying /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build/lib/yolo_pkg/yolo.py -> /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages/yolo_pkg
+[1.319s] byte-compiling /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages/yolo_pkg/__init__.py to __init__.cpython-310.pyc
+[1.319s] byte-compiling /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages/yolo_pkg/yolo.py to yolo.cpython-310.pyc
+[1.320s] running install_data
+[1.320s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/share/ament_index
+[1.320s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/share/ament_index/resource_index
+[1.320s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/share/ament_index/resource_index/packages
+[1.320s] copying resource/yolo_pkg -> /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/share/ament_index/resource_index/packages
+[1.320s] copying package.xml -> /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/share/yolo_pkg
+[1.321s] creating /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/share/yolo_pkg/launch
+[1.321s] running install_egg_info
+[1.339s] Copying ../../build/yolo_pkg/yolo_pkg.egg-info to /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages/yolo_pkg-0.0.0-py3.10.egg-info
+[1.339s] running install_scripts
+[1.480s] Installing yolo_node script to /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/yolo_pkg
+[1.480s] writing list of installed files to '/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/install.log'
+[1.508s] Invoked command in '/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/src/yolo_pkg' returned '0': PYTHONPATH=/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/install/yolo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/yolo_pkg build --build-base /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/build install --record /home/ssafy/Desktop/SSAFY-Smart_Factory/pjt_pkg/build/yolo_pkg/install.log --single-version-externally-managed install_data
