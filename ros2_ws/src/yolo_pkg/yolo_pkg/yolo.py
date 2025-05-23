@@ -16,7 +16,7 @@ class ConveyorYoloNode(Node):
         super().__init__('yolo_node')
 
         # YOLOv5 모델 로드 (경로는 상황에 맞게 수정)
-        self.yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='pjt_pkg/src/yolo_pkg/model/best.pt')
+        self.yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='/home/ssafy/SSAFY-Smart_Factory/ros2_ws/src/yolo_pkg/model/best.pt')
 
         # 이미지 구독
         self.image_sub = self.create_subscription(
