@@ -21,28 +21,39 @@ class ImageTransformer(Node):
         )
 
         # 좌표 퍼블리셔
-        self.publisher = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_point = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_image = self.create_publisher(Image, '/conv_space_image', 10)
 
-        self.points = []
+        self.points_coordinate = []
+        # self.points_conveyor = []
+
         self.original_image = None
         self.latest_frame = None
-        self.transform_matrix = None
-        self.warped_size = (290 * 4, 210 * 4)  # (width, height)
-        self.padding = 100  # 검은 여백 (pixels)
+
+        self.transform_matrix_coordinate = None
+        # self.transform_matrix_conveyor = None
+
+        self.warped_size_coordinate = (290 * 4, 210 * 4)  # (width, height)
+        # self.warped_size_conveyor = (20 * 17 * 2, 20 * 7 * 2)  # (width, height)
+
+        self.pix_x, self.pix_y = self.warped_size_coordinate[0]/2, self.warped_size_coordinate[1]/2
 
         cv2.namedWindow('RealSense Image')
         cv2.setMouseCallback('RealSense Image', self.mouse_callback_original)
-        cv2.namedWindow('Transformed')
-        cv2.setMouseCallback('Transformed', self.mouse_callback_transformed)
+        
+        cv2.namedWindow('Transformed_Coordinate')
+        cv2.setMouseCallback('Transformed_Coordinate', self.mouse_callback_transformed_coordinate)
+
+        cv2.namedWindow('Transformed_Conveyor')
 
     def mouse_callback_original(self, event, x, y, flags, param):
-        if event == cv2.EVENT_LBUTTONDOWN and len(self.points) < 4:
-            self.points.append([x, y])
-            self.get_logger().info(f'Point {len(self.points)}: ({x}, {y})')
+        if event == cv2.EVENT_LBUTTONDOWN and len(self.points_coordinate) < 4:
+            self.points_coordinate.append([x, y])
+            self.get_logger().info(f'Point {len(self.points_coordinate)}: ({x}, {y})')
 
-            if len(self.points) == 4:
-                pts_src = np.array(self.points, dtype='float32')
-                width, height = self.warped_size
+            if len(self.points_coordinate) == 4:
+                width, height = self.warped_size_coordinate
+                pts_src = np.array(self.points_coordinate, dtype='float32')
                 pts_dst = np.array([
                     [0, 0],
                     [width - 1, 0],
@@ -50,28 +61,43 @@ class ImageTransformer(Node):
                     [0, height - 1]
                 ], dtype='float32')
 
-                self.transform_matrix = cv2.getPerspectiveTransform(pts_src, pts_dst)
-                self.points = []
+                self.transform_matrix_coordinate = cv2.getPerspectiveTransform(pts_src, pts_dst)
+                self.points_coordinate = []
 
-    def mouse_callback_transformed(self, event, x, y, flags, param):
+    def mouse_callback_transformed_coordinate(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
-            x_local = x - self.padding
-            y_local = y - self.padding
-
-            real_x, real_y = self.pixel_to_real(x_local, y_local)
+            self.pix_x, self.pix_y = x, y
+            self.x, self.y = self.pixel_to_real(x, y)
             self.get_logger().info(
-                f'[Transformed] Pos : (y : {real_x:.2f}, x : {real_y:.2f})'
+                f'[Transformed] Pos : (y : {self.x:.2f}, x : {self.y:.2f})'
             )
 
             # 퍼블리시
             point = Point()
-            point.x = float(real_x)
-            point.y = float(real_y)
+            point.x = float(self.x)
+            point.y = float(self.y)
             point.z = 0.0
-            self.publisher.publish(point)
+            self.publisher_point.publish(point)
+
+        # if event == cv2.EVENT_RBUTTONDOWN and len(self.points_conveyor) < 4:
+        #     self.points_conveyor.append([x, y])
+        #     self.get_logger().info(f'Point {len(self.points_conveyor)}: ({x}, {y})')
+
+        #     if len(self.points_conveyor) == 4:
+        #         width, height = self.warped_size_conveyor
+        #         pts_src = np.array(self.points_conveyor, dtype='float32')
+        #         pts_dst = np.array([
+        #             [0, 0],
+        #             [width - 1, 0],
+        #             [width - 1, height - 1],
+        #             [0, height - 1]
+        #         ], dtype='float32')
+
+        #         self.transform_matrix_conveyor = cv2.getPerspectiveTransform(pts_src, pts_dst)
+        #         self.points_conveyor = []
 
     def pixel_to_real(self, x, y):
-        width, height = self.warped_size
+        width, height = self.warped_size_coordinate
         x_real_min, x_real_max = -280, 300
         y_real_min, y_real_max = -100, 320
 
@@ -86,35 +112,44 @@ class ImageTransformer(Node):
             self.original_image = image.copy()
             display_image = image.copy()
 
-            for pt in self.points:
+            for pt in self.points_coordinate:
                 cv2.circle(display_image, tuple(pt), 5, (0, 255, 0), -1)
 
             self.latest_frame = display_image
 
-            if self.transform_matrix is not None:
-                width, height = self.warped_size
-                pad = self.padding
+            if self.transform_matrix_coordinate is not None:
+                width, height = self.warped_size_coordinate
 
-                warped = cv2.warpPerspective(image, self.transform_matrix, (width, height))
+                warped_coordinate = cv2.warpPerspective(image, self.transform_matrix_coordinate, (width, height))
 
-                warped = cv2.copyMakeBorder(
-                    warped, pad, pad, pad, pad,
-                    borderType=cv2.BORDER_CONSTANT, value=(0, 0, 0)
-                )
-
-                # 빨간 테두리
-                cv2.rectangle(warped, (pad, pad), (pad + width - 1, pad + height - 1), (0, 0, 255), 2)
+                warped_conveyor = warped_coordinate.copy()[55:340, 40:700]
 
                 # 파란색 그리드 (가로 29칸, 세로 21칸)
                 for i in range(1, 29):
-                    x = pad + int(i * width / 29)
-                    cv2.line(warped, (x, pad), (x, pad + height), (255, 0, 0), 1)
+                    x = int(i * width / 29)
+                    cv2.line(warped_coordinate, (x, 0), (x, height), (200, 50, 0), 1)
 
                 for j in range(1, 21):
-                    y = pad + int(j * height / 21)
-                    cv2.line(warped, (pad, y), (pad + width, y), (255, 0, 0), 1)
+                    y = int(j * height / 21)
+                    cv2.line(warped_coordinate, (0, y), (width, y), (200, 50, 0), 1)
 
-                cv2.imshow('Transformed', warped)
+                cv2.circle(warped_coordinate, (int(self.pix_x), int(self.pix_y)), 3, (0, 0, 255), 3)
+
+                cv2.imshow('Transformed_Coordinate', warped_coordinate)
+
+                cv2.imshow('Transformed_Conveyor', warped_conveyor)
+                
+                ros_image = self.bridge.cv2_to_imgmsg(warped_conveyor, encoding='bgr8')  # 또는 warped_coordinate
+                self.publisher_image.publish(ros_image)
+
+                # if self.transform_matrix_conveyor is not None:
+                #     width, height = self.warped_size_conveyor
+
+                #     warped_conveyor = cv2.warpPerspective(image, self.transform_matrix_conveyor, (width, height))
+
+                #     cv2.imshow('Transformed_Conveyor', warped_conveyor)
+
+
 
         except Exception as e:
             self.get_logger().error(f"CV Bridge error: {e}")

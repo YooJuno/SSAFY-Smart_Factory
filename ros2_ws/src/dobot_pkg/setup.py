@@ -23,10 +23,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'dobot_circle_move_node = dobot_pkg.circle_move:main',
+            # 'dobot_circle_move_node = dobot_pkg.circle_move:main',
             'dobot_homing_service_node = dobot_pkg.homing:main',
-            'dobot_target_follower_node = dobot_pkg.target_follower:main',
-            'pick_and_place_demo = dobot_pkg.pickandplace:main'
+            # 'pick_and_place_demo = dobot_pkg.pickandplace:main'
+            'dobot_target_follower_node = dobot_pkg.target_follower:main'
         ],
     },
 )
