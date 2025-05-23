@@ -36,13 +36,13 @@ class DobotServer(Node):
         for name, pos in zip(msg.name, msg.position):
             self.get_logger().info(f'{name}: {math.degrees(pos):.2f} deg')
         print()
-        time.sleep(0.05)
         '''
         joint1 : -135 ~ 125 (degree)
         joint2 : -5 ~ 40 (degree)
         joint3 : -15 ~ 80 (degree)
         joint4 : 110 ~ 170 (degree)
         '''
+        time.sleep(0.05)
 
     def tcp_callback(self, msg):
         pose = (msg.pose.position.x*1000, msg.pose.position.y*1000, msg.pose.position.z*1000)
