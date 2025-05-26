@@ -7,8 +7,8 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <!-- <link rel="stylesheet" href="/static/style.css" /> -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" /> -->
+    <link rel="stylesheet" href="/static/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4/dist/socket.io.min.js"></script>
     <title>Document</title>
@@ -65,8 +65,8 @@
                 </div>
             </div>
             <div class="video-wrapper">
-                <!-- <img src="{{ url_for('video_feed') }}" /> -->
-                <img class="video-section" id="video-section" src="/static/img/image.png">
+                <img class="video-section" id="video-section" src="{{ url_for('video_feed') }}" />
+                <!-- <img class="video-section" id="video-section" src="/static/img/image.png"> -->
                 <div class="click-overlay" id="click-overlay"></div>
             </div>
 
@@ -88,8 +88,8 @@
             <h2 class="modal-txt"></h2>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
-    <!-- <script src="/static/app.js"></script> -->
+    <!-- <script src="{{ url_for('static', filename='app.js') }}"></script> -->
+    <script src="/static/app.js"></script>
 </body>
 </html>
 
