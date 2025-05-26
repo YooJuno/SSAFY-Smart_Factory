@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── 2) Socket.IO 연결 ───
   // 서버가 같은 도메인/포트로 socketio.run(app) 했다고 가정 → io() 만 써도 됨
-  const socket = io('http://192.168.110.114:65432');
+  const socket = io('http://192.168.110.110:65432');
 
   socket.on('connect', () => {
     console.log('Socket.IO connected, id =', socket.id);
@@ -60,25 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
   socket.on('disconnect', () => {
     console.log('Socket.IO disconnected');
   });
-
-  // 서버가 'joints_update' 이벤트와 함께 최신 joint 배열을 보냄
-  socket.on('joints_update', (msg) => {
-    if (!msg.joints || !Array.isArray(msg.joints) || msg.joints.length !== 4) {
-      console.warn('잘못된 joints_update 메시지:', msg);
-      return;
-    }
-    // msg.joints = [f0, f1, f2, f3]
-    msg.joints.forEach((jointValue, i) => {
-      let v = Number(jointValue);
-      if (isNaN(v)) v = 0;
-      if (v < 0) v = 0;
-      if (v > 100) v = 100;
-
-      charts[i].data.datasets[0].data = [v, 100 - v];
-      charts[i].update();
-    });
-  });
-
   
   const sliderX = document.getElementById('slider-x');
   const valueX  = document.getElementById('value-x');
@@ -103,15 +84,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const imgElem = document.getElementById('video-section');
   const overlay = document.getElementById('click-overlay');
 
-  const canvas = document.getElementById('video-canvas');
-  const ctx = canvas.getContext("2d")
+  let paused = false;
 
-  socket.on("video_frame", (b64data) => {
-    const img = new Image();
-    img.src = "data:image/jpeg;base64," + b64data;
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    };
+  document.addEventListener('click', (e) => {
+    const ignoreIds = ['btn-send', 'btn-homing'];
+
+    if (ignoreIds.some(id => {
+    // 1) 직접 ID가 일치하거나
+      if (e.target.id === id) return true;
+      // 2) 상위 어딘가에 해당 ID를 가진 요소가 있으면 true
+      return e.target.closest(`#${id}`) !== null;
+    })) {
+      return; 
+    }
+
+    paused = true;
   });
 
   // const DOT_SIZE = 10;
@@ -125,6 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modalWrapper.style.opacity = '1';
     modalWrapper.style.visibility = 'visible';
+
+    setTimeout(() => {
+      hideModal();
+    }, 5000);
   }
   
   // ─── 모달을 숨기는 함수 ───
@@ -141,16 +132,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1200);
   }
 
-  socket.on('homing_done', (msg) => {
-    console.log('Received homing_done:', msg);
-    hideModal();
-  });
+  socket.on('state_update', (msg) => {
+    if (paused) {
+      return;
+    }
 
-  // ─── 서버가 move 완료를 알리면 모달 숨기기 ───
-  socket.on('move_done', (msg) => {
-    console.log('Received move_done:', msg);
-    hideModal();
-  });
+    if (msg.joints && Array.isArray(msg.joints) && msg.joints.length === 4) {
+      msg.joints.forEach((jointValue, i) => {
+        let v = Number(jointValue);
+        if (isNaN(v)) v = 0;
+        if (v < 0) v = 0;
+        if (v > 100) v = 100;
+        charts[i].data.datasets[0].data = [v, 100 - v];
+        charts[i].update();
+      });
+    }
+
+    if (typeof msg.x === 'number') {
+      // 예시: sliderX 범위는 min=-100, max=320
+      let xv = Math.round(msg.x);
+      xv = Math.max(Number(sliderX.min), Math.min(Number(sliderX.max), xv));
+      sliderX.value = xv;
+      valueX.textContent = xv;
+    }
+    if (typeof msg.y === 'number') {
+      let yv = Math.round(msg.y);
+      yv = Math.max(Number(sliderY.min), Math.min(Number(sliderY.max), yv));
+      sliderY.value = yv;
+      valueY.textContent = yv;
+    }
+    if (typeof msg.z === 'number') {
+      let zv = Math.round(msg.z);
+      // z-select 값에 따라 이미 선택된 값이 있을 수 있으므로, override 하지 않으려면 주의!
+      // 여기서는 무조건 raw z 값을 덮어쓰는 형태.
+      zv = Math.max(Number(sliderZ.min), Math.min(Number(sliderZ.max), zv));
+      sliderZ.value = zv;
+      valueZ.textContent = zv;
+    }
+    // --- 6-3) suction (Boolean) → 토글 상태 반영
+    if (typeof msg.suction === 'boolean') {
+      checkboxSuction.checked = msg.suction;
+    }
+  })
+
+  // socket.on('homing_done', (msg) => {
+  //   console.log('Received homing_done:', msg);
+  //   hideModal();
+  // });
+
+  // // ─── 서버가 move 완료를 알리면 모달 숨기기 ───
+  // socket.on('move_done', (msg) => {
+  //   console.log('Received move_done:', msg);
+  //   hideModal();
+  // });
 
 
   sliderX.addEventListener('input', () => {
@@ -182,7 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // send 버튼 클릭 이벤트
-  btnSend.addEventListener('click', () => {
+  btnSend.addEventListener('click', (e) => {
+    e.stopPropagation();
+
     const xVal = Number(sliderX.value);
     const yVal = Number(sliderY.value);
     const zVal = Number(sliderZ.value);
@@ -195,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
       suction: suctionOn
     };
 
-    fetch('http://192.168.110.114:65432/send', {
+    fetch('http://192.168.110.110:65432/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -217,7 +253,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // homing 버튼 클릭 이벤트
-  btnHoming.addEventListener('click', () => {
+  btnHoming.addEventListener('click', (e) => {
+    e.stopPropagation();
+
     sliderX.value = 250;
     valueX.textContent = '250';
 
@@ -227,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sliderZ.value = 50;
     valueZ.textContent = '50';
 
-    fetch('http://192.168.110.114:65432/homing', {
+    fetch('http://192.168.110.110:65432/homing', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ homing: true })
@@ -251,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ai 문장 입력 이벤트
   chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
+      e.stopPropagation();
       const message = chatInput.value.trim();
       if (message.length === 0) {
         // 빈 문자열이라면 아무 동작도 하지 않고 그냥 리턴
@@ -258,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 예시: 다른 Flask 서버의 엔드포인트 (ex. localhost:5001/receive_chat) 로 POST 요청
-      fetch('http://192.168.110.114:65432/receive_chat', {
+      fetch('http://192.168.110.110:65432/receive_chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -316,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.appendChild(dot);
 
     // 8) Flask 서버로 비율 정보 전송
-    fetch('http://192.168.110.114:65432/image_click', {
+    fetch('http://192.168.110.110:65432/image_click', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -334,6 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch((err) => {
       console.error('이미지 클릭 전송 에러:', err);
+      hideModal();
+      paused = false;
     });
   });
 });

@@ -18,10 +18,14 @@ from flask import Flask, render_template, request, Response, jsonify, abort
 import requests
 import os
 
+dobot_status = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
-    __name__)
-
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 ROS_DELAY_INTERVAL = 0.1
 server_node = None
 
@@ -70,9 +74,18 @@ class DobotServerNode(Node):
         self.latest_frame = None
         
     def joint_callback(self, msg):
-        # for name, pos in zip(msg.name, msg.position):
-        #     self.get_logger().info(f'{name}: {math.degrees(pos):.2f} deg')
-        # print()
+        dobot_status[3] = math.degrees(msg.position[0])
+        dobot_status[4] = math.degrees(msg.position[1])
+        dobot_status[5] = math.degrees(msg.position[2])
+        dobot_status[6] = math.degrees(msg.position[3])
+
+        # self.get_logger().info(
+        #     f"Joint1: {dobot_status[3]:.2f} deg, "
+        #     f"Joint2: {dobot_status[4]:.2f} deg, "
+        #     f"Joint3: {dobot_status[5]:.2f} deg, "
+        #     f"Joint4: {dobot_status[6]:.2f} deg"
+        # )
+
         '''
         joint1 : -135 ~ 125 (degree)
         joint2 : -5 ~ 40 (degree)
@@ -81,6 +94,7 @@ class DobotServerNode(Node):
         '''
         time.sleep(ROS_DELAY_INTERVAL)
 
+    # 완료
     def tcp_callback(self, msg):
         pose = (msg.pose.position.x*1000, msg.pose.position.y*1000, msg.pose.position.z*1000)
         pose = add_offset(pose)
@@ -88,6 +102,9 @@ class DobotServerNode(Node):
         # self.get_logger().info(
         #     f'TCP Pose: x={(pose[0]):.2f}, y={pose[1]:.2f}, z={pose[2]:.2f}'
         # )
+        dobot_status[0] = pose[0] # x
+        dobot_status[1] = pose[1] # y
+        dobot_status[2] = pose[2] # z
         '''
         Y : -100 ~ 320 (mm)
         Y : -280 ~ 300 (mm)
@@ -126,13 +143,6 @@ class DobotServerNode(Node):
                 return jpeg.tobytes()
             return None
 
-
-# 이미지 서버에서 프레임 가져오기
-# def get_frame():
-#     image = server_node.get_jpeg_image()
-#     image_array = np.frombuffer(image, np.uint8)
-#     frame = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-#     return frame
 
 # 프레임을 웹에 띄울 수 있게 인코딩
 def generate_stream():
@@ -197,21 +207,6 @@ def receive_controls():
 def get_latest():
     return jsonify(latest_command), 200
 
-# 두봇의 움직임이 다 끝났을 때 post 요청 -> 웹페이지에서 모달 사라짐(사용자 조작 가능해짐)
-# ros2에서 homing을 완료하면 해당 url로 {"move_done" : true}를 post로 보내야함
-@app.route('/move_done', methods=['POST'])
-def finish_move():
-    global moving_state
-    data = request.get_json()
-
-    if not data or 'move_done' not in data:
-        abort(400)
-
-    if data.get('move_done') is True:
-        moving_state = False
-        socketio.emit('move_done', {'status': 'ok'})
-        return jsonify({'status': 'ok'}), 200
-
 
 # 사용자가 Homing 버튼을 눌렀다는 것을 app.js를 통해 받아옴 
 @app.route('/homing', methods=['POST'])
@@ -230,27 +225,12 @@ def start_homing():
 @app.route('/homing_state', methods=['GET'])
 def get_homing_state():
     return jsonify({'homing': homing_state}), 200
-
-# 두봇의 움직임이 다 끝났을 때 post 요청 -> 웹페이지에서 모달 사라짐(사용자 조작 가능해짐)
-# ros2에서 homing을 완료하면 해당 url로 {"homing_done" : true}를 post로 보내야함
-@app.route('/homing_done', methods=['POST'])
-def finish_homing():
-    global homing_state
-    data = request.get_json()
-    
-    if not data or 'homing_done' not in data:
-        abort(400)
-
-    if data.get('homing_done') is True:
-        homing_state = False
-        socketio.emit('homing_done', {'status': 'ok'})
-        return jsonify({'status': 'ok'}), 200
     
 
 # 해당 url로 {"joints":[f1, f2, f3, f4]} 값을 보내면 도넛 차트 업데이트
 @app.route('/update_joints', methods=['POST'])
 def update_joints():
-    global latest_joints
+    global dobot_status
     data = request.get_json()
     if not data or 'joints' not in data:
         abort(400)
@@ -309,6 +289,59 @@ def receive_chat():
     print(f"[ChatReceiver] 사용자 메시지: {user_message}")
     return jsonify({'status': 'ok', 'received': user_message}), 200
 
+def broadcast_status():
+    # ROS 노드가 준비될 때까지 잠시 대기
+    while server_node is None:
+        time.sleep(0.05)
+
+    # joint 각도를 0~100 비율로 변환할 때 쓸 범위(예제)
+    joint_ranges = [
+        (-135.0, 125.0),  # joint1
+        (-5.0, 40.0),     # joint2
+        (-15.0, 80.0),    # joint3
+        (110.0, 170.0)    # joint4
+    ]
+
+    while True:
+        # ① dobot_status[0:3] → x_mm, y_mm, z_mm
+        x_mm = dobot_status[0]
+        y_mm = dobot_status[1]
+        z_mm = dobot_status[2]
+
+        # ② dobot_status[3:7] (deg) → 0~100 비율
+        percents = []
+        for i in range(4):
+            deg = dobot_status[3 + i]
+            lo, hi = joint_ranges[i]
+            p = (deg - lo) / (hi - lo) * 100.0
+            p = max(0.0, min(100.0, p))
+            percents.append(p)
+
+        # ③ dobot_status[7] → Boolean
+        suction_bool = (dobot_status[7] >= 0.5)
+
+        # ④ Socket.IO로 emit
+        socketio.emit('state_update', {
+            'x': x_mm,
+            'y': y_mm,
+            'z': z_mm,
+            'joints': percents,
+            'suction': suction_bool
+        })
+
+        # 1초 대기
+        time.sleep(0.5)
+
+
+@socketio.on('connect')
+def on_connect():
+    # 클라이언트가 최초 연결될 때 broadcast_status를 background task로 실행
+    # 한 번만 실행되도록, 이미 실행 중인지 체크할 수도 있음.
+    # 단순히 여러 클라이언트가 연결돼도 한 번만 실행되도록 flag를 쓰는 예:
+    if not hasattr(on_connect, 'started'):
+        on_connect.started = True
+        socketio.start_background_task(broadcast_status)
+
 
 def ros_thread_main():
     global server_node
@@ -357,13 +390,7 @@ def main():
     # tcp_thread = threading.Thread(target=tcp_server_main, daemon=True)
     # tcp_thread.start()
 
-    # app.run(host='0.0.0.0', port=8000)
-    # socketio.run(app, host='0.0.0.0', port=8080)
     socketio.run(app, host='0.0.0.0', port=65432, allow_unsafe_werkzeug=True, debug=True, use_reloader=False)
-
-
-
-
 
 if __name__ == '__main__':
     main()
