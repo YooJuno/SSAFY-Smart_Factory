@@ -136,15 +136,6 @@ class DobotServerNode(Node):
             return None
 
 
-@app.route('/camera/image')
-def get_image():
-    image = server_node.get_jpeg_image()
-    if image:
-        return Response(response=image, content_type='image/jpeg')
-    else:
-        return Response("No image available", status=404)
-
-
 def ros_thread_main():
     global server_node
     rclpy.init()
@@ -165,3 +156,18 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+
+
+
+@app.route('/camera/image')
+def get_image():
+    image = server_node.get_jpeg_image()
+    if image:
+        return Response(response=image, content_type='image/jpeg')
+    else:
+        return Response("No image available", status=404)
