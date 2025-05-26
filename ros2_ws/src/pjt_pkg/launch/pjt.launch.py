@@ -52,11 +52,6 @@ def generate_launch_description():
         #     output='screen'
         # ),
 
-        # Node(
-        #     package='server_pkg',
-        #     executable='server_node',
-        #     output='screen'
-        # ),
         Node(
             package='server_pkg',
             executable='server_node',

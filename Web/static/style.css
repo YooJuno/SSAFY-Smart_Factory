@@ -74,7 +74,7 @@ header > nav > .header-box > .openai-logo {
     width: 80%;
     height: 2rem;
     margin-left: 0.6rem;
-    background-image: url("./img/OpenAI_Logo.svg.png");
+    background-image: url("/Web/static/img/OpenAI_Logo.svg.png");
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;

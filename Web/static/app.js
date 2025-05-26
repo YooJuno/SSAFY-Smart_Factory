@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── 2) Socket.IO 연결 ───
   // 서버가 같은 도메인/포트로 socketio.run(app) 했다고 가정 → io() 만 써도 됨
-  const socket = io('http://192.168.110.114:8080');
+  const socket = io('http://192.168.110.114:65432');
 
   socket.on('connect', () => {
     console.log('Socket.IO connected, id =', socket.id);
@@ -102,6 +102,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const imgElem = document.getElementById('video-section');
   const overlay = document.getElementById('click-overlay');
+
+  const canvas = document.getElementById('video-canvas');
+  const ctx = canvas.getContext("2d")
+
+  socket.on("video_frame", (b64data) => {
+    const img = new Image();
+    img.src = "data:image/jpeg;base64," + b64data;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+  });
 
   // const DOT_SIZE = 10;
   // const DOT_RADIUS = DOT_SIZE / 2;
@@ -184,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
       suction: suctionOn
     };
 
-    fetch('http://192.168.110.114:8080/send', {
+    fetch('http://192.168.110.114:65432/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -216,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sliderZ.value = 50;
     valueZ.textContent = '50';
 
-    fetch('http://192.168.110.114:8080/homing', {
+    fetch('http://192.168.110.114:65432/homing', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ homing: true })
@@ -247,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 예시: 다른 Flask 서버의 엔드포인트 (ex. localhost:5001/receive_chat) 로 POST 요청
-      fetch('http://192.168.110.114:8080/receive_chat', {
+      fetch('http://192.168.110.114:65432/receive_chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -305,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.appendChild(dot);
 
     // 8) Flask 서버로 비율 정보 전송
-    fetch('http://192.168.110.114:8080/image_click', {
+    fetch('http://192.168.110.114:65432/image_click', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
