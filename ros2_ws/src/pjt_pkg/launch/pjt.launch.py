@@ -17,28 +17,28 @@ def generate_launch_description():
             )
         ),
 
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(
-                    get_package_share_directory('dobot_bringup'),
-                    '',
-                    'dobot_magician_control_system.launch.py'
-                )
-            )
-        ),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource(
+        #         os.path.join(
+        #             get_package_share_directory('dobot_bringup'),
+        #             '',
+        #             'dobot_magician_control_system.launch.py'
+        #         )
+        #     )
+        # ),
 
-        Node(
-            package='dobot_pkg',
-            executable='dobot_homing_service_node',
-            output='screen'
-        ),
+        # Node(
+        #     package='dobot_pkg',
+        #     executable='dobot_homing_service_node',
+        #     output='screen'
+        # ),
 
 
-        Node(
-            package='dobot_pkg',
-            executable='dobot_target_follower_node',
-            output='screen'
-        ),
+        # Node(
+        #     package='dobot_pkg',
+        #     executable='dobot_target_follower_node',
+        #     output='screen'
+        # ),
 
         Node(
             package='vision_pkg',
@@ -46,11 +46,11 @@ def generate_launch_description():
             output='screen'
         ),
 
-        Node(
-            package='yolo_pkg',
-            executable='yolo_node',
-            output='screen'
-        ),
+        # Node(
+        #     package='yolo_pkg',
+        #     executable='yolo_node',
+        #     output='screen'
+        # ),
 
         Node(
             package='server_pkg',
