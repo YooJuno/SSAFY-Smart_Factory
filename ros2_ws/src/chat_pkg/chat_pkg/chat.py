@@ -12,7 +12,7 @@ client = OpenAI(
 
 class TargetPublisher(Node):
     def __init__(self):
-        super().__init__('target_publisher_node')
+        super().__init__('chat_node')
         self.publisher_pos = self.create_publisher(Point, '/target_pos', 10)
         self.publisher_suction = self.create_publisher(Bool, '/working_suction', 10)
         self.subscription = self.create_subscription(
