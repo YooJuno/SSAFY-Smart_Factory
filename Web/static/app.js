@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 예시: 다른 Flask 서버의 엔드포인트 (ex. localhost:5001/receive_chat) 로 POST 요청
-      fetch('http://192.168.0.6:8080/receive_chat', {
+      fetch('http://192.168.110.110:8080/receive_chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.appendChild(dot);
 
     // 8) Flask 서버로 비율 정보 전송
-    fetch('http://192.168.0.6:8080/image_click', {
+    fetch('http://192.168.110.110:8080/image_click', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

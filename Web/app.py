@@ -8,7 +8,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-CAMERA_URL = 'http://192.168.110.110:8000/camera/image'
+CAMERA_URL = 'http://192.168.110.114:8000/camera/image'
 
 latest_command = {
     'x': None,
@@ -41,7 +41,7 @@ def generate_stream():
             if ret:
                 yield (b'--frame\r\n'
                        b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
-        time.sleep(1.0 / 30.0)
+        # time.sleep(1.0 / 30.0)
 
 @app.route('/')
 def index():

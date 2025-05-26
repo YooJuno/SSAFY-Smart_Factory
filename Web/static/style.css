@@ -229,6 +229,7 @@ main > .left-section > .controller-wrapper > .slider-wrapper > .slider-label > .
 
 main > .left-section > .controller-wrapper > .slider-wrapper > .slider {
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     width: 250px;
     height: 8px;
@@ -245,7 +246,26 @@ main > .left-section > .controller-wrapper > .slider-wrapper > .slider::-webkit-
     /* border: 1px solid #388e3c; */
 }
 
+main > .left-section > .controller-wrapper > .slider-wrapper > .slider::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 4px;
+    /* border: 1px solid #388e3c; */
+}
+
 main > .left-section > .controller-wrapper > .slider-wrapper > .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border: 1px solid #4caf50;
+    border-radius: 50%;
+    margin-top: -6px;
+}
+
+main > .left-section > .controller-wrapper > .slider-wrapper > .slider::-moz-range-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
@@ -386,7 +406,7 @@ footer > .btn-wrapper > .btn > .btn-text {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 35%;
     height: 100%;
     z-index: 3;
 }
@@ -395,10 +415,10 @@ footer > .btn-wrapper > .btn > .btn-text {
     border: 2px solid grey;
     border-radius: 5px;
     background-color: white;
-    width: 40vw;
+    width: 23vw;
     height: 23vh;
     position: fixed;
-    left: 25vw;
+    left: 5vw;
     top: 35vh;
     margin-left: 5vw;
     transition: opacity 1.2s ease;
@@ -419,5 +439,7 @@ footer > .btn-wrapper > .btn > .btn-text {
 
 .modal-wrapper > .modal-text-wrapper > .modal-txt {
     letter-spacing: 0.09rem;
+    justify-content: center;
+    align-items: center;
     /* font-size: 2rem; */
 }
