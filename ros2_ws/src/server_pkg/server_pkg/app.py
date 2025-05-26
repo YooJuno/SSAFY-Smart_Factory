@@ -19,7 +19,7 @@ import requests
 
 app = Flask(__name__)
 
-ROS_DELAY_INTERVAL = 0
+ROS_DELAY_INTERVAL = 0.1
 server_node = None
 
 TCP_HOST = '192.168.110.110'  # 서버 IP 주소
@@ -338,8 +338,8 @@ def main():
 
     # app.run(host='0.0.0.0', port=8000)
     # socketio.run(app, host='0.0.0.0', port=8080)
-    socketio.run(app, host='0.0.0.0', port=8080, allow_unsafe_werkzeug=True)
-    # socketio.run(app, host='0.0.0.0', port=8080, debug=False)
+    socketio.run(app, host='0.0.0.0', port=8080, allow_unsafe_werkzeug=True, debug=True, use_reloader=False)
+
 
 
 
