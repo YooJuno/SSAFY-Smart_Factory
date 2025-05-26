@@ -23,7 +23,8 @@ class ImageTransformer(Node):
 
         # 좌표 퍼블리셔
         self.publisher_point = self.create_publisher(Point, '/target_pos', 10)
-        self.publisher_image = self.create_publisher(Image, '/conv_space_image', 10)
+        self.publisher_conv_image = self.create_publisher(Image, '/conv_space_image', 10)
+        self.publisher_coord_image = self.create_publisher(Image, '/coord_space_image', 10)
 
         self.points_coordinate = []
 
@@ -122,8 +123,18 @@ class ImageTransformer(Node):
                 cur_time = time.time()
                 if cur_time - self.prev_time >= 1.0:
                     conv_image = self.bridge.cv2_to_imgmsg(warped_conveyor, encoding='bgr8')
+<<<<<<< HEAD:ros2_ws/src/vision_pkg/vision_pkg/rs_workspace.py
                     self.publisher_image.publish(conv_image)
                     self.prev_time = cur_time
+=======
+                    self.publisher_conv_image.publish(conv_image)
+
+                    self.prev_time = cur_time
+                    
+                resized_wrape_coord_image = cv2.resize(warped_coordinate, (warped_coordinate.shape[1] // 2, warped_coordinate.shape[0] // 2))
+                coord_image = self.bridge.cv2_to_imgmsg(resized_wrape_coord_image, encoding='bgr8')
+                self.publisher_coord_image.publish(coord_image)
+>>>>>>> juno:ros2_ws/src/vision_pkg/vision_pkg/perspective_transformer.py
 
         except Exception as e:
             self.get_logger().error(f"CV Bridge error: {e}")

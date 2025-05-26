@@ -23,7 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'perspective_transformer_node = vision_pkg.rs_workspace:main'
+            'perspective_transformer_node = vision_pkg.perspective_transformer:main'
             # 'rs_yolo_node = vision_pkg.realsensewithYOLO:main',
             # 'get_dist_node = vision_pkg.getDistance:main'
         ],
