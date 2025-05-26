@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <!-- <link rel="stylesheet" href="/Web/static/style.css" /> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4/dist/socket.io.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="root">
+        <header>
+            <nav>
+                <div class="header-box">
+                    <div class="openai-logo"></div>
+                </div>
+                <div class="chat-box">
+                    <!-- <p class="chat-txt">What can I help with?</p> -->
+                    <input type="text" class="chat-txt" id="chat-txt" placeholder="What can I help with?">
+                </div>
+            </nav>
+        </header>
+        <main>
+            <div class="left-section">
+                <div class="chart-wrapper">
+                    <div class="chart" id="chart-0"></div>
+                    <div class="chart" id="chart-1"></div>
+                    <div class="chart" id="chart-2"></div>
+                    <div class="chart" id="chart-3"></div>
+                </div>
+                <div class="controller-wrapper">
+                    <div class="slider-wrapper">
+                        <p class="slider-label">x</p>
+                        <input type="range" id="slider-x" min="-100" max="320" value="110" class="slider">
+                        <p class="value" id="value-x">50</p>
+                    </div>
+                    <div class="slider-wrapper">
+                        <p class="slider-label">y</p>
+                        <input type="range" id="slider-y" min="-280" max="300" value="10" class="slider">
+                        <p class="value" id="value-y">50</p>
+                    </div>
+                    <div class="slider-wrapper">
+                        <div class="z-wrapper">
+                            <select class="z-select" id="z-select">
+                                <option value=""></option>
+                                <option value="box">box</option>
+                                <option value="panel">panel</option>
+                            </select>
+                            <p class="slider-label">z</p>
+                        </div>
+                        <input type="range" id="slider-z" min="0" max="100" value="50" class="slider">
+                        <p class="value" id="value-z">50</p>
+                    </div>
+                    <div class="toggle-switch">
+                        <p class="toggle-txt">SUCTION CUP</p>
+                        <input type="checkbox" class="toggle-input" id="toggle" />
+                        <label class="toggle-label" for="toggle"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="video-wrapper">
+                 <!-- <canvas id="video-canvas" class="video-section"></canvas> -->
+                 <img class="video-section" id="video-section" src="{{ url_for('video_feed') }}" />
+                <!-- <img class="video-section" id="video-section" src='http://192.168.110.114:65432/video_feed' /> -->
+                <!-- <img class="video-section" id="video-section" src="/static/img/image.png"> -->
+                <div class="click-overlay" id="click-overlay"></div>
+            </div>
+
+        </main>
+        <footer>
+            <div class="btn-wrapper">
+                <div class="btn" id="btn-homing">
+                    <p class="btn-text">HOMING</p>
+                </div>
+                <div class="btn" id="btn-send">
+                    <p class="btn-text">SEND</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div class="modal-overlay"></div>
+    <div class="modal-wrapper">
+        <div class="modal-text-wrapper">
+            <h2 class="modal-txt"></h2>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <!-- <script src="/Web/static/app.js"></script> -->
+</body>
+</html>
+
