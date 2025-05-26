@@ -15,13 +15,14 @@ class TargetPublisher(Node):
         super().__init__('chat_node')
         self.publisher_pos = self.create_publisher(Point, '/target_pos', 10)
         self.publisher_suction = self.create_publisher(Bool, '/working_suction', 10)
+        self.publisher_homing = self.create_publisher(String, '/go_home', 10)
         self.subscription = self.create_subscription(
             String,
             '/chat_input',
             self.user_input_callback,
             10
         )
-        self.get_logger().info('/chat_input 토픽에서 입력을 기다립니다.')
+        self.get_logger().info('/chat_input 토픽에서 입력을 기다리는 중')
 
     def user_input_callback(self, msg):
         user_input = msg.data
@@ -48,7 +49,7 @@ class TargetPublisher(Node):
                 msg.z = float(z)
                 self.publisher_pos.publish(msg)
                 self.get_logger().info(f'좌표 전송 완료: ({x}, {y}, {z})')
-            else:
+            elif response["cmd"] == "suction":
                 try:
                     is_suction = response["is_suction"]
                     is_suction = bool(is_suction)
@@ -59,6 +60,11 @@ class TargetPublisher(Node):
                 msg.data = is_suction
                 self.publisher_suction.publish(msg)
                 self.get_logger().info(f'suction 전송 완료: {is_suction}')
+            else:
+                msg = String()
+                msg.data = "homing"
+                self.publisher_homing.publish(msg)
+                self.get_logger().info(f'homing 전송 완료')
 
             time.sleep(2)
     
@@ -69,6 +75,9 @@ class TargetPublisher(Node):
 
             example)
             [
+                {
+                    "cmd": "homing"
+                },
                 {
                     "cmd": "move",
                     "xyz": {
@@ -92,6 +101,9 @@ class TargetPublisher(Node):
                 {
                     "cmd": "suction",
                     "is_suction": 0
+                }, 
+                {
+                    "cmd": "homing"
                 }, ...
             ]
             
