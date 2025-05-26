@@ -11,27 +11,12 @@ from cv_bridge import CvBridge
 
 import torch
 
-<<<<<<< HEAD
-H = 0
-S = 0
-V = 0
-count = 0
-
-package_name = 'yolo_pkg'
-
-=======
->>>>>>> juno
 class ConveyorYoloNode(Node):
     def __init__(self):
         super().__init__('yolo_node')
 
         # YOLOv5 모델 로드 (경로는 상황에 맞게 수정)
-<<<<<<< HEAD
-        model_path = 'ros2_ws/src/yolo_pkg/model/best.pt'
-        self.yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
-=======
         self.yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='/home/ssafy/SSAFY-Smart_Factory/ros2_ws/src/yolo_pkg/model/best.pt')
->>>>>>> juno
 
         # 이미지 구독
         self.image_sub = self.create_subscription(
@@ -48,22 +33,6 @@ class ConveyorYoloNode(Node):
 
     def get_color_name(self, hsv_color):
         h, s, v = hsv_color
-<<<<<<< HEAD
-        print(f"[HSV 평균값] H: {h:.2f}, S: {s:.2f}, V: {v:.2f}", end=" - ")
-
-        # BLUE: H값이 100~120, S가 높고 V는 중간 이상
-        if 100 < h < 120 and s > 230 and v > 50:
-            print("blue")
-            return 'blue'
-        # WHITE: S가 매우 낮고 V가 높음
-        elif s < 30 and v > 100:
-            print("white")
-            return 'white'
-        print("red")
-        return 'red'
-
-
-=======
         if 20 < h < 60 and s < 80 and 120 < v < 255:
             return 'white'
         elif ((h < 10 or h > 160) and s > 100 and v > 60):
@@ -71,7 +40,6 @@ class ConveyorYoloNode(Node):
         elif 80 < h < 150 and s > 80 and v > 40:
             return 'blue'
         return 'unknown'
->>>>>>> juno
 
     def get_color_bgr(self, color_name):
         if color_name == 'white':

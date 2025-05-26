@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'server_node = server_pkg.server:main'
+            'server_node = server_pkg.app:main'
         ],
     },
 )
