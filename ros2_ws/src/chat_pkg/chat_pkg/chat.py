@@ -1,19 +1,20 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Point
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 import time
 import json
 
 from openai import OpenAI
 client = OpenAI(
-    api_key=""
+    api_key="sk-proj-GsbdPOxiDTDiFwopcpstT3BlbkFJKeqJCD48skZSLAeTKn16"
 )
 
 class TargetPublisher(Node):
     def __init__(self):
         super().__init__('target_publisher_node')
-        self.publisher_ = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_pos = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_suction = self.create_publisher(Bool, '/working_suction', 10)
         self.subscription = self.create_subscription(
             String,
             '/chat_input',
@@ -32,20 +33,33 @@ class TargetPublisher(Node):
             return
         
         for response in responses:
-            try:
-                x = response['x']
-                y = response['y']
-                z = response['z']
-            except Exception as e:
-                self.get_logger().error('좌표 파싱 오류')
-                continue
+            if response["cmd"] == "move":
+                try:
+                    x = response["xyz"]['x']
+                    y = response["xyz"]['y']
+                    z = response["xyz"]['z']
+                except Exception as e:
+                    self.get_logger().error('좌표 파싱 오류')
+                    continue
 
-            msg = Point()
-            msg.x = float(x)
-            msg.y = float(y)
-            msg.z = float(z)
-            self.publisher_.publish(msg)
-            self.get_logger().info(f'좌표 전송 완료: ({x}, {y}, {z})')
+                msg = Point()
+                msg.x = float(x)
+                msg.y = float(y)
+                msg.z = float(z)
+                self.publisher_pos.publish(msg)
+                self.get_logger().info(f'좌표 전송 완료: ({x}, {y}, {z})')
+            else:
+                try:
+                    is_suction = response["is_suction"]
+                    is_suction = bool(is_suction)
+                except Exception as e:
+                    self.get_logger().error('논리값 파싱 오류')
+                    continue
+                msg = Bool()
+                msg.data = is_suction
+                self.publisher_suction.publish(msg)
+                self.get_logger().info(f'suction 전송 완료: {is_suction}')
+
             time.sleep(2)
     
     def get_gpt_response(self, user_input):
@@ -54,16 +68,31 @@ class TargetPublisher(Node):
             Analyze the user's input and respond in JSON format.
 
             example)
-            [{
-                "x": {userinput},
-                "y": {userinput},
-                "z": {userinput}
-            },
-            {
-                "x": {userinput},
-                "y": {userinput},
-                "z": {userinput}
-            }, ...
+            [
+                {
+                    "cmd": "move",
+                    "xyz": {
+                                "x": {userinput},
+                                "y": {userinput},
+                                "z": {userinput}
+                            }
+                },
+                {
+                    "cmd": "suction",
+                    "is_suction": 1
+                },
+                {
+                    "cmd": "move",
+                    "xyz": {
+                                "x": {userinput},
+                                "y": {userinput},
+                                "z": {userinput}
+                            }
+                },
+                {
+                    "cmd": "suction",
+                    "is_suction": 0
+                }, ...
             ]
             
             You must not add anything other than JSON format (such as comments) to your response so that it can be parsed by a JSON parser in Python.
