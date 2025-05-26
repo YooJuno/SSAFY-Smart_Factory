@@ -1,23 +1,22 @@
 import rclpy
+import math
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from action_msgs.msg import GoalStatus
 from geometry_msgs.msg import Point
+from std_msgs.msg import Bool
 
 from dobot_msgs.action import PointToPoint
-
 from dobot_msgs.srv import SuctionCupControl
-
-import math
 
 def add_offset(x, y, z):
     a_tan = math.atan2(x, y)
     tcp_length = 58
 
-    offset_x = math.sin(a_tan)*tcp_length
-    offset_y = math.cos(a_tan)*tcp_length
+    offset_x = math.sin(a_tan) * tcp_length
+    offset_y = math.cos(a_tan) * tcp_length
     offset_z = 68
 
     return x - offset_x, y - offset_y, z + offset_z
@@ -25,42 +24,49 @@ def add_offset(x, y, z):
 class TargetFollower(Node):
     def __init__(self):
         super().__init__('dobot_target_follower_node')
-
         self.group = ReentrantCallbackGroup()
 
-        # 액션 클라이언트
+        # Action client for movement
         self.action_client = ActionClient(self, PointToPoint, 'PTP_action', callback_group=self.group)
-        self.cli = self.create_client(SuctionCupControl, 'dobot_suction_cup_service')
         
-        while not self.cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('service not available, waiting again...')
-        self.req = SuctionCupControl.Request()
+        # Service client for suction
+        self.suction_cli = self.create_client(SuctionCupControl, 'dobot_suction_cup_service')
+        while not self.suction_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Suction service not available, waiting...')
+        self.suction_req = SuctionCupControl.Request()
 
-
-        # 토픽 구독
-        self.subscription = self.create_subscription(
+        # Subscriptions
+        self.target_sub = self.create_subscription(
             Point,
             '/target_pos',
             self.target_callback,
             10,
             callback_group=self.group
         )
+        
+        self.suction_sub = self.create_subscription(
+            Bool,
+            'working_suction',
+            self.suction_callback,
+            10,
+            callback_group=self.group
+        )
 
-        self.busy = False  # 이동 중인지 확인
-        self.get_logger().info('Target follower node initialized.')
+        self.busy = False
+        self.get_logger().info('Dobot controller node initialized.')
 
+    #region Movement Control
     def target_callback(self, msg):
         if self.busy:
-            self.get_logger().info('Dobot is busy. Ignoring target.')
+            self.get_logger().info('Dobot busy - ignoring movement command')
             return
 
-        self.get_logger().info(f'Received target: ({msg.x:.2f}, {msg.y:.2f}, {msg.z:.2f})')
+        self.get_logger().info(f'New target received: X:{msg.x:.2f}, Y:{msg.y:.2f}, Z:{msg.z:.2f}')
+        result_x, result_y, _ = add_offset(msg.x, msg.y, 0.0)
 
         goal_msg = PointToPoint.Goal()
-        result_x, result_y, result_z = add_offset(msg.x, msg.y, 0.0)
-
-        goal_msg.target_pose = [result_y, result_x, 0.0, 0.0]  # Z, R은 필요시 조정
-        goal_msg.motion_type = 1  # 1 = MOVEL (선형 이동), 0 = MOVEJ (조인트 이동)
+        goal_msg.target_pose = [result_y, result_x, 0.0, 0.0]
+        goal_msg.motion_type = 1
 
         self.action_client.wait_for_server()
         self.busy = True
@@ -73,39 +79,56 @@ class TargetFollower(Node):
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected.')
+            self.get_logger().info('Movement goal rejected')
             self.busy = False
             return
 
-        self.get_logger().info('Goal accepted.')
-
+        self.get_logger().info('Movement in progress...')
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
         status = future.result().status
-        result = future.result().result
         if status == GoalStatus.STATUS_SUCCEEDED:
-            self.get_logger().info('Movement succeeded.')
+            self.get_logger().info('Movement completed successfully')
         else:
-            self.get_logger().warn('Movement failed or was canceled.')
+            self.get_logger().warn(f'Movement failed with status: {status}')
         self.busy = False
 
     def feedback_callback(self, feedback_msg):
-        feedback = feedback_msg.feedback
-        self.get_logger().info(f'Feedback: {feedback}')
+        self.get_logger().debug(f'Movement progress: {feedback_msg.feedback}')
+    #endregion
 
+    #region Suction Control
+    def suction_callback(self, msg):
+        self.get_logger().info(f'Received suction command: {msg.data}')
+        self.suction_req.enable_suction = msg.data
+        future = self.suction_cli.call_async(self.suction_req)
+        future.add_done_callback(self.suction_response_callback)
+
+    def suction_response_callback(self, future):
+        try:
+            response = future.result()
+            if response.success:
+                self.get_logger().info('Suction state updated successfully')
+            else:
+                self.get_logger().warn('Suction operation failed')
+        except Exception as e:
+            self.get_logger().error(f'Service call failed: {str(e)}')
+    #endregion
 
 def main(args=None):
     rclpy.init(args=args)
     node = TargetFollower()
-
-    executor = MultiThreadedExecutor()
-    rclpy.spin(node, executor=executor)
-
-    node.destroy_node()
-    rclpy.shutdown()
-
+    
+    try:
+        executor = MultiThreadedExecutor()
+        rclpy.spin(node, executor=executor)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
