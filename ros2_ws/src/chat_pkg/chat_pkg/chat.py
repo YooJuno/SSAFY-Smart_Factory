@@ -7,7 +7,7 @@ import json
 
 from openai import OpenAI
 client = OpenAI(
-    api_key="sk-proj-GsbdPOxiDTDiFwopcpstT3BlbkFJKeqJCD48skZSLAeTKn16"
+    api_key=""
 )
 
 class TargetPublisher(Node):
