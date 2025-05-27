@@ -11,12 +11,16 @@ from cv_bridge import CvBridge
 
 import torch
 
+import time
+
 H = 0
 S = 0
 V = 0
 count = 0
 
 package_name = 'yolo_pkg'
+
+
 
 class ConveyorYoloNode(Node):
     def __init__(self):
@@ -97,20 +101,22 @@ class ConveyorYoloNode(Node):
             color_name = self.get_color_name(center_color)
             color_bgr = self.get_color_bgr(color_name)
             label = self.yolo_model.names[class_id]
-            detection_result.data = label + ' ' + color_name
+            detection_result.data = color_name
 
             cv2.rectangle(color_image, (x1, y1), (x2, y2), color_bgr, 2)
             cv2.putText(
                 color_image, f'{label}-{color_name}', (x1, y1-10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_bgr, 2
             )
+            break
 
         cv2.imshow('object detection', color_image)
         cv2.waitKey(1)
-
-        self.detection_publisher.publish(detection_result)
-        ros_image_message = self.bridge.cv2_to_imgmsg(color_image, encoding='bgr8')
-        self.image_publisher.publish(ros_image_message)
+        if detection_result.data != '':
+            self.detection_publisher.publish(detection_result)
+            ros_image_message = self.bridge.cv2_to_imgmsg(color_image, encoding='bgr8')
+            self.image_publisher.publish(ros_image_message)
+            
 
 def main(args=None):
     rclpy.init(args=args)

@@ -25,8 +25,14 @@ ROS_DELAY_INTERVAL = 0.1
 server_node = None
 is_suction_working = False
 
-TCP_HOST = '192.168.110.110'  # 서버 IP 주소
-TCP_PORT = 40000              # 포트 번호
+HOST = '192.168.110.114'  # 서버 IP 주소
+RDK_PORT = 20000              # 포트 번호
+RPI_PORT = 40000              # 포트 번호
+clients = {
+    'rpi': None,  # RPI용 TCP 클라이언트 소켓
+    'rdk': None   # RDK용 TCP 클라이언트 소켓
+}
+
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -117,8 +123,31 @@ class DobotServerNode(Node):
         time.sleep(ROS_DELAY_INTERVAL)
 
     def yolo_callback(self, msg):
-        
+        global clients
+        data = msg.data.strip()  # YOLO 결과 문자열
+
+        print(f"[YOLO] 결과 수신: {data}")
+
+        # RPI 클라이언트로 전송
+        if clients.get('rpi'):
+            try:
+                clients['rpi'].sendall(data.encode('utf-8'))
+                print(f"[TCP] RPI로 YOLO 결과 전송: {data}")
+            except Exception as e:
+                print(f"[TCP] RPI 전송 오류: {e}")
+                clients['rpi'] = None  # 연결 끊김 처리
+
+        # RDK 클라이언트로 전송
+        if clients.get('rdk'):
+            try:
+                clients['rdk'].sendall(data.encode('utf-8'))
+                print(f"[TCP] RDK로 YOLO 결과 전송: {data}")
+            except Exception as e:
+                print(f"[TCP] RDK 전송 오류: {e}")
+                clients['rdk'] = None  # 연결 끊김 처리
+
         time.sleep(ROS_DELAY_INTERVAL)
+
 
     def get_jpeg_image(self):
         global server_node
@@ -219,16 +248,17 @@ def ros_thread_main():
     server_node.destroy_node()
     rclpy.shutdown()
 
-
-def tcp_server_main():
+def tcp_server_main1():
+    global clients
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind((TCP_HOST, TCP_PORT))
+    server_socket.bind((HOST, RPI_PORT))
     server_socket.listen(1)
-    print(f"[TCP] 서버가 {TCP_HOST}:{TCP_PORT}에서 대기 중입니다...")
+    print(f"[TCP] 서버가 {HOST}:{RPI_PORT}에서 대기 중입니다...")
 
     client_socket, addr = server_socket.accept()
-    print(f"[TCP] 클라이언트 연결됨: {addr}")
+    clients['rpi'] = client_socket  # 🔥 클라이언트 등록
+    print(f"[TCP] 클라이언트 연결됨 (RPI): {addr}")
 
     try:
         while True:
@@ -237,8 +267,7 @@ def tcp_server_main():
                 print("[TCP] 서버를 종료합니다.")
                 break
             if not msg:
-                continue  # 빈 입력 무시
-
+                continue
             client_socket.sendall(msg.encode('utf-8'))
             print(f"[TCP] 전송 완료: {msg}")
 
@@ -247,16 +276,52 @@ def tcp_server_main():
 
     finally:
         client_socket.close()
+        clients['rpi'] = None  # 🔥 연결 종료 시 클라이언트 제거
         server_socket.close()
         print("[TCP] 서버 소켓 종료.")
 
+
+def tcp_server_main2():
+    global clients
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind((HOST, RDK_PORT))
+    server_socket.listen(1)
+    print(f"[TCP] 서버가 {HOST}:{RDK_PORT}에서 대기 중입니다...")
+
+    client_socket, addr = server_socket.accept()
+    clients['rdk'] = client_socket  # 🔥 클라이언트 등록
+    print(f"[TCP] 클라이언트 연결됨 (RDK): {addr}")
+
+    try:
+        while True:
+            msg = input("클라이언트로 보낼 색상(red, white, blue 등) 입력 (종료: exit): ").strip()
+            if msg.lower() == "exit":
+                print("[TCP] 서버를 종료합니다.")
+                break
+            if not msg:
+                continue
+            client_socket.sendall(msg.encode('utf-8'))
+            print(f"[TCP] 전송 완료: {msg}")
+
+    except Exception as e:
+        print(f"[TCP] 에러 발생: {e}")
+
+    finally:
+        client_socket.close()
+        clients['rpi'] = None  # 🔥 연결 종료 시 클라이언트 제거
+        server_socket.close()
+        print("[TCP] 서버 소켓 종료.")
 
 def main():
     ros_thread = threading.Thread(target=ros_thread_main, daemon=True)
     ros_thread.start()
 
-    # tcp_thread = threading.Thread(target=tcp_server_main, daemon=True)
-    # tcp_thread.start()
+    tcp_thread1 = threading.Thread(target=tcp_server_main1, daemon=True)
+    tcp_thread1.start()
+
+    tcp_thread2 = threading.Thread(target=tcp_server_main2, daemon=True)
+    tcp_thread2.start()
 
     app.run(host='0.0.0.0', port=65432, debug=True, use_reloader=False)
 
