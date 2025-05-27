@@ -200,55 +200,19 @@ def receive_controls():
     latest_command['z'] = data.get('z', 0)
     latest_command['suction'] = data.get('suction', False)
 
-    return jsonify(latest_command), 200
-
-# /send에서 받아온 데이터 확인용(json 형식)
-@app.route('/user_command', methods=['GET'])
-def get_latest():
+    '''
+    dobot 움직임 명령
+    '''
+    print(f"[Receiver] 사용자 메시지: {latest_command[0], latest_command[1], latest_command[2], latest_command[3]}")
     return jsonify(latest_command), 200
 
 
 # 사용자가 Homing 버튼을 눌렀다는 것을 app.js를 통해 받아옴 
 @app.route('/homing', methods=['POST'])
 def start_homing():
-    global homing_state
-    data = request.get_json()
-
-    if not data or 'homing' not in data:
-        abort(400)
-
-    if data['homing'] is True:
-        homing_state = True
-        return jsonify({'status': 'ok'}), 200
-    
-# json 형식으로 {"homing":true} 반환
-@app.route('/homing_state', methods=['GET'])
-def get_homing_state():
-    return jsonify({'homing': homing_state}), 200
-    
-
-# 해당 url로 {"joints":[f1, f2, f3, f4]} 값을 보내면 도넛 차트 업데이트
-@app.route('/update_joints', methods=['POST'])
-def update_joints():
-    global dobot_status
-    data = request.get_json()
-    if not data or 'joints' not in data:
-        abort(400)
-
-    joints = data['joints']
-    corrected = []
-    for v in joints:
-        try:
-            f = float(v)
-        except:
-            f = 0.0
-        if f < 0: f = 0.0
-        if f > 100: f = 100.0
-        corrected.append(f)
-
-    latest_joints = corrected
-
-    socketio.emit('joints_update', {'joints': latest_joints})
+    '''
+    유준호밍
+    '''
     return jsonify({'status': 'ok'}), 200
 
 
@@ -390,7 +354,7 @@ def main():
     # tcp_thread = threading.Thread(target=tcp_server_main, daemon=True)
     # tcp_thread.start()
 
-    socketio.run(app, host='0.0.0.0', port=65432, allow_unsafe_werkzeug=True, debug=True, use_reloader=False)
+    socketio.run(app, host='0.0.0.0', port=65433, allow_unsafe_werkzeug=True, debug=True, use_reloader=False)
 
 if __name__ == '__main__':
     main()
