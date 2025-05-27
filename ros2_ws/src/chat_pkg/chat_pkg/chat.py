@@ -5,9 +5,14 @@ from std_msgs.msg import String, Bool
 import time
 import json
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path='.env.local')
+
 from openai import OpenAI
 client = OpenAI(
-    api_key=""
+    api_key = os.getenv('API_KEY1')
 )
 
 class TargetPublisher(Node):
