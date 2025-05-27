@@ -43,6 +43,8 @@ class ConveyorYoloNode(Node):
 
         self.bridge = CvBridge()
 
+        self.last_sent_time = 0 
+
     def get_color_name(self, hsv_color):
         h, s, v = hsv_color
         print(f"[HSV 평균값] H: {h:.2f}, S: {s:.2f}, V: {v:.2f}", end=" - ")
@@ -83,20 +85,16 @@ class ConveyorYoloNode(Node):
         return average_color
 
     def image_callback(self, msg):
-        # ROS Image -> OpenCV Image
+
         color_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-
-        # YOLOv5 inference
         results = self.yolo_model(color_image)
-
         detection_result = String()
 
-        # Draw bounding boxes
         for result in results.xyxy[0]:
             x1, y1, x2, y2, confidence, class_id = map(int, result[:6])
             object_roi = color_image[y1:y2, x1:x2]
             if object_roi.size == 0:
-                continue  # Skip invalid ROI
+                continue
             center_color = self.get_center_color(object_roi)
             color_name = self.get_color_name(center_color)
             color_bgr = self.get_color_bgr(color_name)
@@ -112,10 +110,20 @@ class ConveyorYoloNode(Node):
 
         cv2.imshow('object detection', color_image)
         cv2.waitKey(1)
+        # 현재 시간
+        now = time.time()
+        # 마지막 전송 이후 5초가 지났는지 확인
+        if now - self.last_sent_time < 8.0:
+            return  # 5초가 지나지 않았다면 publish하지 않음!
+        
         if detection_result.data != '':
             self.detection_publisher.publish(detection_result)
             ros_image_message = self.bridge.cv2_to_imgmsg(color_image, encoding='bgr8')
             self.image_publisher.publish(ros_image_message)
+
+            # 마지막 전송 시간 업데이트!
+            self.last_sent_time = now
+
             
 
 def main(args=None):

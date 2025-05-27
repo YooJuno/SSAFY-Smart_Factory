@@ -77,6 +77,8 @@ class DobotServerNode(Node):
         self.lock = threading.Lock()
         self.bridge = CvBridge()
         self.latest_frame = None
+
+        self.last_sent_time = 0 
         
     '''
     joint1 : -135 ~ 125 (degree)
