@@ -245,9 +245,11 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((data) => {
         showModal("Waiting for homing...");
         console.log('Flask /homing 응답:', data);
+        paused = false;
       })
       .catch((error) => {
         console.error('Homing 요청 실패:', error);
+        paused = false;
         hideModal();
       });
   });
@@ -280,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('ai Flask 서버 응답:', data);
         // 전송 후 입력창 초기화
         chatInput.value = '';
+        paused = false;
       })
       .catch((err) => {
         console.error('채팅 전송 중 에러 발생:', err);
@@ -287,19 +290,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  let clickXVal = null;
+  let clickYVal = null;
+
+  imgElem.addEventListener('click', (event) => {
+    // 1) offsetX, offsetY: 이미지 요소 기준(클릭된 픽셀 좌표) - 정확한 픽셀 위치
+    const offsetX = event.offsetX;
+    const offsetY = event.offsetY;
+
+    // 2) 이미지가 화면에 렌더된 실제 크기(윤곽 박스 크기) 구하기
+    const rect = imgElem.getBoundingClientRect();
+    const imgWidth  = rect.width;
+    const imgHeight = rect.height;
+
+    // 3) 범위 검사(보호 코드)
+    if (offsetX < 0 || offsetY < 0 || offsetX > imgWidth || offsetY > imgHeight) {
+      return; // 클릭이 이미지 바깥에서 일어났다면 무시
+    }
+
+    // 4) 비율 계산 (0.0 ~ 1.0 사이 숫자)
+    const xRatio = offsetX / imgWidth;
+    const yRatio = offsetY / imgHeight;
+
+    clickXVal = 320 - (320 + 100)*yRatio
+    clickYVal = 300 - (300 + 280)*xRatio
+
+    // 5) 이전 dot 제거(한 번만 보이게 하려면)
+    overlay.innerHTML = '';
+
+    // 6) 새로운 dot 생성
+    const dot = document.createElement('div');
+    dot.classList.add('click-dot');
+
+    // 7) dot을 퍼센트 단위로 위치시키기
+    dot.style.left = (xRatio * 100) + '%';
+    dot.style.top  = (yRatio * 100) + '%';
+    // (transform: translate(-50%, -50%)가 CSS에 적용되어 있으므로, dot의 중심이 이 퍼센트 지점에 맞춰집니다.)
+
+    overlay.appendChild(dot);
+  });  
+
 
   // send 버튼 클릭 이벤트
   btnSend.addEventListener('click', (e) => {
     e.stopPropagation();
 
-    xVal = Number(sliderX.value);
-    yVal = Number(sliderY.value);
+    let xValToSend, yValToSend;
+
+    if (clickXVal !== null && clickYVal !== null) {
+      xValToSend = clickXVal;
+      yValToSend = clickYVal;
+    } else {
+      // (2) 아니면 슬라이더 값을 사용
+      xValToSend = Number(sliderX.value);
+      yValToSend = Number(sliderY.value);
+    }
+
     zVal = Number(sliderZ.value);
     suctionOn = checkboxSuction.checked;
 
     const payload = {
-      x: xVal,
-      y: yVal,
+      x: xValToSend,
+      y: yValToSend,
       z: zVal,
       suction: suctionOn
     };
@@ -318,6 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((data) => {
         showModal("Please wait while the robot is moving...");
         console.log('Flask /send 응답:', data);
+        clickXVal = null;
+        clickYVal = null;
+        overlay.innerHTML = '';
+        paused = false;
       })
       .catch((error) => {
         console.error('전송 중 에러 발생:', error);

@@ -7,10 +7,9 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <!-- <link rel="stylesheet" href="/Web/static/style.css" /> -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" /> -->
+    <link rel="stylesheet" href="/static/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4/dist/socket.io.min.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -35,6 +34,15 @@
                     <div class="chart" id="chart-3"></div>
                 </div>
                 <div class="controller-wrapper">
+                    <div class="select-wrapper">
+                        <select class="z-select" id="z-select">
+                            <option value=""></option>
+                            <option value="box">box</option>
+                            <option value="panel">panel</option>
+                            <option value="conv-box">conv-box</option>
+                            <option value="conv-panel">conv-panel</option>
+                        </select>
+                    </div>
                     <div class="slider-wrapper">
                         <p class="slider-label">x</p>
                         <input type="range" id="slider-x" min="-100" max="320" value="110" class="slider">
@@ -46,16 +54,7 @@
                         <p class="value" id="value-y">50</p>
                     </div>
                     <div class="slider-wrapper">
-                        <div class="z-wrapper">
-                            <select class="z-select" id="z-select">
-                                <option value=""></option>
-                                <option value="box">box</option>
-                                <option value="panel">panel</option>
-                                <option value="conv-box">conv-box</option>
-                                <option value="conv-panel">conv-panel</option>
-                            </select>
-                            <p class="slider-label">z</p>
-                        </div>
+                        <p class="slider-label">z</p>
                         <input type="range" id="slider-z" min="-130" max="113" value="-8.5" class="slider">
                         <p class="value" id="value-z">22.5</p>
                     </div>
@@ -69,7 +68,7 @@
             <div class="video-wrapper">
                 <!-- <img class="video-section" id="video-section" src="{{ url_for('video_feed') }}" /> -->
                 <img class="video-section" id="video-section" src="/ros2_ws/src/server_pkg/server_pkg/static/img/image.png">
-                <!-- <div class="click-overlay" id="click-overlay"></div> -->
+                <div class="click-overlay" id="click-overlay"></div>
             </div>
 
         </main>
@@ -90,8 +89,7 @@
             <h2 class="modal-txt"></h2>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
-    <!-- <script src="/Web/static/app.js"></script> -->
+    <!-- <script src="{{ url_for('static', filename='app.js') }}"></script> -->
+    <script src="/static/app.js"></script>
 </body>
 </html>
-
