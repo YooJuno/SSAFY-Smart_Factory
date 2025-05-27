@@ -46,7 +46,7 @@ class TargetFollower(Node):
         
         self.suction_sub = self.create_subscription(
             Bool,
-            'working_suction',
+            '/working_suction',
             self.suction_callback,
             10,
             callback_group=self.group
@@ -62,10 +62,10 @@ class TargetFollower(Node):
             return
 
         self.get_logger().info(f'New target received: X:{msg.x:.2f}, Y:{msg.y:.2f}, Z:{msg.z:.2f}')
-        result_x, result_y, _ = add_offset(msg.x, msg.y, 0.0)
+        result_x, result_y, result_z = add_offset(msg.x, msg.y, msg.z)
 
         goal_msg = PointToPoint.Goal()
-        goal_msg.target_pose = [result_y, result_x, 0.0, 0.0]
+        goal_msg.target_pose = [result_x, result_y, result_z, 0.0]
         goal_msg.motion_type = 1
 
         self.action_client.wait_for_server()

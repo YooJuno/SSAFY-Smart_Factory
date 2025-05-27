@@ -6,13 +6,18 @@ import time
 import json
 
 from openai import OpenAI
+
+
+import os
+from dotenv import load_dotenv
+
 client = OpenAI(
-    api_key=""
+    api_key = 'sk-proj-GsbdPOxiDTDiFwopcpstT3BlbkFJKeqJCD48skZSLAeTKn16'
 )
 
 class TargetPublisher(Node):
     def __init__(self):
-        super().__init__('target_publisher_node')
+        super().__init__('chat_node')
         self.publisher_ = self.create_publisher(Point, '/target_pos', 10)
         self.subscription = self.create_subscription(
             String,

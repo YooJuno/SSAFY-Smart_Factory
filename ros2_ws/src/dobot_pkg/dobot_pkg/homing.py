@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from dobot_msgs.srv import ExecuteHomingProcedure
+from std_msgs.msg import String
 import sys
 
 class Node1(Node):
@@ -15,11 +16,21 @@ class Node1(Node):
 
         self.send_request()
 
+        self.subscription = self.create_subscription(
+            String,
+            '/go_home',
+            self.homing,
+            10
+        )
+
     def send_request(self):
         request = ExecuteHomingProcedure.Request()
 
         future = self.cli.call_async(request)
         future.add_done_callback(self.handle_response)
+
+    def homing(self, msg):
+        self.send_request()
 
     def handle_response(self, future):
         try:

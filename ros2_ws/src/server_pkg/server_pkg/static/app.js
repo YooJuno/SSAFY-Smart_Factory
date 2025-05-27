@@ -1,5 +1,10 @@
 // static/app.js
 
+// ─── 0) 서버 주소와 포트 전역 변수 ───
+const SERVER_HOST = '192.168.110.114';
+const SERVER_PORT = 65432;
+const SERVER_URL  = `http://${SERVER_HOST}:${SERVER_PORT}`;
+
 document.addEventListener('DOMContentLoaded', () => {
   // ─── 1) 도넛 차트 인스턴스 배열 ───
   const charts = [];
@@ -15,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ctx = canvas.getContext('2d');
 
-    // 초기: 모두 0 (0, 100)
     const data = {
       labels: ['Value', 'Remaining'],
       datasets: [{
@@ -49,18 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     charts.push(chart);
   }
 
-  // ─── 2) Socket.IO 연결 ───
-  // 서버가 같은 도메인/포트로 socketio.run(app) 했다고 가정 → io() 만 써도 됨
-  const socket = io('http://192.168.110.110:65432');
-
-  socket.on('connect', () => {
-    console.log('Socket.IO connected, id =', socket.id);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Socket.IO disconnected');
-  });
-  
   const sliderX = document.getElementById('slider-x');
   const valueX  = document.getElementById('value-x');
 
@@ -88,23 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click', (e) => {
     const ignoreIds = ['btn-send', 'btn-homing'];
-
-    if (ignoreIds.some(id => {
-    // 1) 직접 ID가 일치하거나
-      if (e.target.id === id) return true;
-      // 2) 상위 어딘가에 해당 ID를 가진 요소가 있으면 true
-      return e.target.closest(`#${id}`) !== null;
-    })) {
-      return; 
+    if (ignoreIds.some(id => e.target.id === id || e.target.closest(`#${id}`))) {
+      return;
     }
-
     paused = true;
   });
 
-  // const DOT_SIZE = 10;
-  // const DOT_RADIUS = DOT_SIZE / 2;
-
-  // ─── 모달을 화면에 띄우는 함수 ───
   function showModal(text) {
     modalText.textContent = text;
     modalOverlay.style.opacity = '1';
@@ -115,14 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       hideModal();
-    }, 5000);
+    }, 1500);
   }
-  
-  // ─── 모달을 숨기는 함수 ───
+
   function hideModal() {
     modalOverlay.style.opacity = '0';
     modalOverlay.style.transition = "opacity 1.2s ease";
-
     modalWrapper.style.opacity = '0';
     modalWrapper.style.transition = "opacity 1.2s ease";
 
@@ -132,70 +111,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1200);
   }
 
-  socket.on('state_update', (msg) => {
-    if (paused) {
-      return;
-    }
+  function fetchStatusAndUpdate() {
+    fetch(`${SERVER_URL}/status`)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP 에러! status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        if (paused) return;
 
-    if (msg.joints && Array.isArray(msg.joints) && msg.joints.length === 4) {
-      msg.joints.forEach((jointValue, i) => {
-        let v = Number(jointValue);
-        if (isNaN(v)) v = 0;
-        if (v < 0) v = 0;
-        if (v > 100) v = 100;
-        charts[i].data.datasets[0].data = [v, 100 - v];
-        charts[i].update();
+        const jointRanges = [
+          { lo: -135.0, hi: 125.0 },
+          { lo: -5.0,   hi: 40.0 },
+          { lo: -15.0,  hi: 80.0 },
+          { lo: 110.0,  hi: 170.0 }
+        ];
+
+        const degValues = [
+          Number(data.joints1),
+          Number(data.joints2),
+          Number(data.joints3),
+          Number(data.joints4)
+        ];
+
+        degValues.forEach((deg, i) => {
+          if (isNaN(deg)) deg = 0;
+          const { lo, hi } = jointRanges[i];
+          let p = (deg - lo) / (hi - lo) * 100.0;
+          p = Math.max(0.0, Math.min(100.0, p));
+          charts[i].data.datasets[0].data = [p, 100 - p];
+          charts[i].update();
+        });
+
+        
+
+        if (typeof data.x === 'number') {
+          let xv = Math.round(data.x);
+          xv = Math.max(Number(sliderX.min), Math.min(Number(sliderX.max), xv));
+          sliderX.value = xv;
+          valueX.textContent = xv;
+        }
+        if (typeof data.y === 'number') {
+          let yv = Math.round(data.y);
+          yv = Math.max(Number(sliderY.min), Math.min(Number(sliderY.max), yv));
+          sliderY.value = yv;
+          valueY.textContent = yv;
+        }
+        if (typeof data.z === 'number') {
+          let zv = Math.round(data.z);
+          zv = Math.max(Number(sliderZ.min), Math.min(Number(sliderZ.max), zv));
+          sliderZ.value = zv;
+          valueZ.textContent = zv;
+        }
+
+        if (typeof data.suction === 'number') {
+          checkboxSuction.checked = (data.suction >= 0.5);
+        }
+
+        console.log(`${data.x} ${data.y} ${data.z}`);
+      })
+      .catch(err => {
+        console.error('Status fetch 에러:', err);
       });
-    }
+  }
 
-    if (typeof msg.x === 'number') {
-      // 예시: sliderX 범위는 min=-100, max=320
-      let xv = Math.round(msg.x);
-      xv = Math.max(Number(sliderX.min), Math.min(Number(sliderX.max), xv));
-      sliderX.value = xv;
-      valueX.textContent = xv;
-    }
-    if (typeof msg.y === 'number') {
-      let yv = Math.round(msg.y);
-      yv = Math.max(Number(sliderY.min), Math.min(Number(sliderY.max), yv));
-      sliderY.value = yv;
-      valueY.textContent = yv;
-    }
-    if (typeof msg.z === 'number') {
-      let zv = Math.round(msg.z);
-      // z-select 값에 따라 이미 선택된 값이 있을 수 있으므로, override 하지 않으려면 주의!
-      // 여기서는 무조건 raw z 값을 덮어쓰는 형태.
-      zv = Math.max(Number(sliderZ.min), Math.min(Number(sliderZ.max), zv));
-      sliderZ.value = zv;
-      valueZ.textContent = zv;
-    }
-    // --- 6-3) suction (Boolean) → 토글 상태 반영
-    if (typeof msg.suction === 'boolean') {
-      checkboxSuction.checked = msg.suction;
-    }
-  })
+  fetchStatusAndUpdate();
+  setInterval(fetchStatusAndUpdate, 500);
 
-  // socket.on('homing_done', (msg) => {
-  //   console.log('Received homing_done:', msg);
-  //   hideModal();
-  // });
-
-  // // ─── 서버가 move 완료를 알리면 모달 숨기기 ───
-  // socket.on('move_done', (msg) => {
-  //   console.log('Received move_done:', msg);
-  //   hideModal();
-  // });
-
-
-  sliderX.addEventListener('input', () => {
-    valueX.textContent = sliderX.value;
-  });
-  sliderY.addEventListener('input', () => {
-    valueY.textContent = sliderY.value;
-  });
-  sliderZ.addEventListener('input', () => {
-    valueZ.textContent = sliderZ.value;
-  });
+  sliderX.addEventListener('input', () => valueX.textContent = sliderX.value);
+  sliderY.addEventListener('input', () => valueY.textContent = sliderY.value);
+  sliderZ.addEventListener('input', () => valueZ.textContent = sliderZ.value);
 
   window.addEventListener('DOMContentLoaded', () => {
     valueX.textContent = sliderX.value;
@@ -206,58 +191,39 @@ document.addEventListener('DOMContentLoaded', () => {
   selectZ.addEventListener('change', () => {
     const choice = selectZ.value;
     if (choice === 'box') {
-      sliderZ.value = 45;
-    } else if (choice === 'panel') {
-      sliderZ.value = 25;
-    } else {
+      sliderZ.value = -105;
+    }
+    else if(choice === 'panel') {
+      sliderZ.value = -127;
+    }
+    else if(choice === 'conv-box') {
+      sliderX.value = 272
+      sliderY.value = 4
+      sliderZ.value = -53;
+
+      valueX.textContent = sliderX.value
+      valueY.textContent = sliderY.value
+    }
+    else if(choice === 'conv-panel') {
+      sliderX.value = 266
+      sliderY.value = 4
+      sliderZ.value = -72;
+
+      valueX.textContent = sliderX.value
+      valueY.textContent = sliderY.value
+    }
+    else {
       sliderZ.value = 50;
     }
     valueZ.textContent = sliderZ.value;
-  });
-
-  // send 버튼 클릭 이벤트
-  btnSend.addEventListener('click', (e) => {
-    e.stopPropagation();
-
-    const xVal = Number(sliderX.value);
-    const yVal = Number(sliderY.value);
-    const zVal = Number(sliderZ.value);
-    const suctionOn = checkboxSuction.checked;
-
-    const payload = {
-      x: xVal,
-      y: yVal,
-      z: zVal,
-      suction: suctionOn
-    };
-
-    fetch('http://192.168.110.110:65432/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('서버 응답 에러: ' + response.status);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        showModal("Please wait while the robot is moving...");
-        console.log('Flask /send 응답:', data);
-      })
-      .catch((error) => {
-        console.error('전송 중 에러 발생:', error);
-        hideModal();
-      });
   });
 
   // homing 버튼 클릭 이벤트
   btnHoming.addEventListener('click', (e) => {
     e.stopPropagation();
 
-    sliderX.value = 250;
-    valueX.textContent = '250';
+    sliderX.value = 180;
+    valueX.textContent = '180';
 
     sliderY.value = 0;
     valueY.textContent = '0';
@@ -265,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sliderZ.value = 50;
     valueZ.textContent = '50';
 
-    fetch('http://192.168.110.110:65432/homing', {
+    fetch(`${SERVER_URL}/homing`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ homing: true })
@@ -297,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 예시: 다른 Flask 서버의 엔드포인트 (ex. localhost:5001/receive_chat) 로 POST 요청
-      fetch('http://192.168.110.110:65432/receive_chat', {
+      fetch(`${SERVER_URL}/receive_chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -321,60 +287,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  imgElem.addEventListener('click', (event) => {
-    // 1) offsetX, offsetY: 이미지 요소 기준(클릭된 픽셀 좌표) - 정확한 픽셀 위치
-    const offsetX = event.offsetX;
-    const offsetY = event.offsetY;
 
-    // 2) 이미지가 화면에 렌더된 실제 크기(윤곽 박스 크기) 구하기
-    const rect = imgElem.getBoundingClientRect();
-    const imgWidth  = rect.width;
-    const imgHeight = rect.height;
+  // send 버튼 클릭 이벤트
+  btnSend.addEventListener('click', (e) => {
+    e.stopPropagation();
 
-    // 3) 범위 검사(보호 코드)
-    if (offsetX < 0 || offsetY < 0 || offsetX > imgWidth || offsetY > imgHeight) {
-      return; // 클릭이 이미지 바깥에서 일어났다면 무시
-    }
+    xVal = Number(sliderX.value);
+    yVal = Number(sliderY.value);
+    zVal = Number(sliderZ.value);
+    suctionOn = checkboxSuction.checked;
 
-    // 4) 비율 계산 (0.0 ~ 1.0 사이 숫자)
-    const xRatio = offsetX / imgWidth;
-    const yRatio = offsetY / imgHeight;
+    const payload = {
+      x: xVal,
+      y: yVal,
+      z: zVal,
+      suction: suctionOn
+    };
 
-    // 5) 이전 dot 제거(한 번만 보이게 하려면)
-    overlay.innerHTML = '';
-
-    // 6) 새로운 dot 생성
-    const dot = document.createElement('div');
-    dot.classList.add('click-dot');
-
-    // 7) dot을 퍼센트 단위로 위치시키기
-    dot.style.left = (xRatio * 100) + '%';
-    dot.style.top  = (yRatio * 100) + '%';
-    // (transform: translate(-50%, -50%)가 CSS에 적용되어 있으므로, dot의 중심이 이 퍼센트 지점에 맞춰집니다.)
-
-    overlay.appendChild(dot);
-
-    // 8) Flask 서버로 비율 정보 전송
-    fetch('http://192.168.110.110:65432/image_click', {
+    fetch(`${SERVER_URL}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        x_ratio: xRatio,
-        y_ratio: yRatio
+      body: JSON.stringify(payload)
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('서버 응답 에러: ' + response.status);
+        }
+        return response.json();
       })
-    })
-    .then((resp) => {
-      if (!resp.ok) throw new Error('이미지 클릭 전송 실패: ' + resp.status);
-      return resp.json();
-    })
-    .then((data) => {
-      showModal("Please wait while the robot is moving...");
-      console.log('Flask /image_click 응답:', data);
-    })
-    .catch((err) => {
-      console.error('이미지 클릭 전송 에러:', err);
-      hideModal();
-      paused = false;
-    });
+      .then((data) => {
+        showModal("Please wait while the robot is moving...");
+        console.log('Flask /send 응답:', data);
+      })
+      .catch((error) => {
+        console.error('전송 중 에러 발생:', error);
+        hideModal();
+      });
   });
+
 });

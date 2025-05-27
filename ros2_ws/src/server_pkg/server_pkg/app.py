@@ -1,22 +1,17 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Bool
-from sensor_msgs.msg import JointState
-from geometry_msgs.msg import PoseStamped
-from sensor_msgs.msg import Image 
-from std_msgs.msg import String
-from geometry_msgs.msg import Point
+from std_msgs.msg import String, Bool
+from geometry_msgs.msg import PoseStamped, Point
+from sensor_msgs.msg import JointState, Image 
 
 from cv_bridge import CvBridge
-import threading, time, math, cv2, socket
+import threading, time, math, cv2, socket, os
 import numpy as np
 
 from flask_cors import CORS
-from flask_socketio import SocketIO
 from flask import Flask, render_template, request, Response, jsonify, abort
 import requests
-import os
 
 dobot_status = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -28,11 +23,11 @@ app = Flask(
 )
 ROS_DELAY_INTERVAL = 0.1
 server_node = None
+is_suction_working = False
 
 TCP_HOST = '192.168.110.110'  # 서버 IP 주소
 TCP_PORT = 40000              # 포트 번호
 
-socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 latest_command = {
@@ -68,6 +63,10 @@ class DobotServerNode(Node):
         self.create_subscription(String, '/detection_results', self.yolo_callback, 10)
 
         self.publisher_target_point = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_homing = self.create_publisher(String, '/go_home', 10)
+        self.publisher_chat = self.create_publisher(String, '/chat_input', 10)
+        self.publisher_point = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_suction = self.create_publisher(Bool, '/working_suction', 10)
 
         self.lock = threading.Lock()
         self.bridge = CvBridge()
@@ -184,127 +183,64 @@ def video_feed():
     return Response(generate_stream(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/status', methods=['GET'])
+def status():
+    status = {
+        'x': dobot_status[0],
+        'y': dobot_status[1],
+        'z': dobot_status[2],
+        'joints1': dobot_status[3],
+        'joints2': dobot_status[4],
+        'joints3': dobot_status[5],
+        'joints4': dobot_status[6],
+        'suction': is_suction_working
+    }
+    return jsonify(status), 200
+
 
 # 사용자가 x, y, z, suction_cup 값 지정 후 send 버튼 누름 -> app.js에서 값을 받아옴
 @app.route('/send', methods=['POST'])
 def receive_controls():
-    global moving_state
+    global server_node
     data = request.get_json()
-    if not data:
-        abort(400)
-    
-    moving_state = True
 
-    latest_command['x'] = data.get('x', 0)
-    latest_command['y'] = data.get('y', 0)
-    latest_command['z'] = data.get('z', 0)
-    latest_command['suction'] = data.get('suction', False)
+    point = Point()
+    point.x = float(data.get('x', 0))
+    point.y = float(data.get('y', 0))
+    point.z = float(data.get('z', 0))
 
-    '''
-    dobot 움직임 명령
-    '''
-    print(f"[Receiver] 사용자 메시지: {latest_command[0], latest_command[1], latest_command[2], latest_command[3]}")
-    return jsonify(latest_command), 200
+    suction_working = Bool()
+    suction_working.data = data.get('suction')
+
+    server_node.publisher_point.publish(point)
+    server_node.publisher_suction.publish(suction_working)
+
+    return jsonify({'status': 'ok'}), 200
 
 
-# 사용자가 Homing 버튼을 눌렀다는 것을 app.js를 통해 받아옴 
 @app.route('/homing', methods=['POST'])
 def start_homing():
-    '''
-    유준호밍
-    '''
+    global server_node
+    from std_msgs.msg import String
+    msg = String()
+    msg.data = 'go_home'
+    server_node.publisher_homing.publish(msg)
     return jsonify({'status': 'ok'}), 200
-
-
-# 동영상에서 사용자가 클릭한곳을 비율로 받아옴
-@app.route('/image_click', methods=['POST'])
-def image_click():
-    data = request.get_json()
-    if not data or 'x_ratio' not in data or 'y_ratio' not in data:
-        abort(400)
-
-    x_ratio = data.get('x_ratio')
-    y_ratio = data.get('y_ratio')
-
-    # 비율 값이 숫자인지 확인 (안전책)
-    try:
-        x_ratio = float(x_ratio)
-        y_ratio = float(y_ratio)
-    except:
-        abort(400)
-
-    # 0.0 ≤ x_ratio ≤ 1.0, 0.0 ≤ y_ratio ≤ 1.0 범위 체크 (선택)
-    if not (0.0 <= x_ratio <= 1.0 and 0.0 <= y_ratio <= 1.0):
-        abort(400)
-
-    # 예시: 로그로 찍어 보기
-    print(f"[ImageClick] x_ratio: {x_ratio:.4f}, y_ratio: {y_ratio:.4f}")
-
-    return jsonify({'status': 'ok'}), 200
+    
 
 # 사용자가 chat gpt에 입력한 문장을 받아옴
 @app.route('/receive_chat', methods=['POST'])
 def receive_chat():
+    global server_node
     data = request.get_json()
-    if not data or 'message' not in data:
-        abort(400)
 
-    user_message = data['message']
-    print(f"[ChatReceiver] 사용자 메시지: {user_message}")
-    return jsonify({'status': 'ok', 'received': user_message}), 200
+    msg = String()
+    user_message = str(data['message'])
+    msg.data = user_message
+    server_node.publisher_chat.publish(msg)
+    server_node.get_logger().info(f'{msg.data}')
 
-def broadcast_status():
-    # ROS 노드가 준비될 때까지 잠시 대기
-    while server_node is None:
-        time.sleep(0.05)
-
-    # joint 각도를 0~100 비율로 변환할 때 쓸 범위(예제)
-    joint_ranges = [
-        (-135.0, 125.0),  # joint1
-        (-5.0, 40.0),     # joint2
-        (-15.0, 80.0),    # joint3
-        (110.0, 170.0)    # joint4
-    ]
-
-    while True:
-        # ① dobot_status[0:3] → x_mm, y_mm, z_mm
-        x_mm = dobot_status[0]
-        y_mm = dobot_status[1]
-        z_mm = dobot_status[2]
-
-        # ② dobot_status[3:7] (deg) → 0~100 비율
-        percents = []
-        for i in range(4):
-            deg = dobot_status[3 + i]
-            lo, hi = joint_ranges[i]
-            p = (deg - lo) / (hi - lo) * 100.0
-            p = max(0.0, min(100.0, p))
-            percents.append(p)
-
-        # ③ dobot_status[7] → Boolean
-        suction_bool = (dobot_status[7] >= 0.5)
-
-        # ④ Socket.IO로 emit
-        socketio.emit('state_update', {
-            'x': x_mm,
-            'y': y_mm,
-            'z': z_mm,
-            'joints': percents,
-            'suction': suction_bool
-        })
-
-        # 1초 대기
-        time.sleep(0.5)
-
-
-@socketio.on('connect')
-def on_connect():
-    # 클라이언트가 최초 연결될 때 broadcast_status를 background task로 실행
-    # 한 번만 실행되도록, 이미 실행 중인지 체크할 수도 있음.
-    # 단순히 여러 클라이언트가 연결돼도 한 번만 실행되도록 flag를 쓰는 예:
-    if not hasattr(on_connect, 'started'):
-        on_connect.started = True
-        socketio.start_background_task(broadcast_status)
+    return jsonify({'status': 'ok'}), 200
 
 
 def ros_thread_main():
@@ -354,7 +290,7 @@ def main():
     # tcp_thread = threading.Thread(target=tcp_server_main, daemon=True)
     # tcp_thread.start()
 
-    socketio.run(app, host='0.0.0.0', port=65433, allow_unsafe_werkzeug=True, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=65432, debug=True, use_reloader=False)
 
 if __name__ == '__main__':
     main()

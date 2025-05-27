@@ -51,11 +51,13 @@
                                 <option value=""></option>
                                 <option value="box">box</option>
                                 <option value="panel">panel</option>
+                                <option value="conv-box">conv-box</option>
+                                <option value="conv-panel">conv-panel</option>
                             </select>
                             <p class="slider-label">z</p>
                         </div>
-                        <input type="range" id="slider-z" min="0" max="100" value="50" class="slider">
-                        <p class="value" id="value-z">50</p>
+                        <input type="range" id="slider-z" min="-130" max="113" value="-8.5" class="slider">
+                        <p class="value" id="value-z">22.5</p>
                     </div>
                     <div class="toggle-switch">
                         <p class="toggle-txt">SUCTION CUP</p>
@@ -65,8 +67,8 @@
                 </div>
             </div>
             <div class="video-wrapper">
-                <img class="video-section" id="video-section" src="{{ url_for('video_feed') }}" />
-                <!-- <img class="video-section" id="video-section" src="/static/img/image.png"> -->
+                <!-- <img class="video-section" id="video-section" src="{{ url_for('video_feed') }}" /> -->
+                <img class="video-section" id="video-section" src="/ros2_ws/src/server_pkg/server_pkg/static/img/image.png">
                 <!-- <div class="click-overlay" id="click-overlay"></div> -->
             </div>
 
