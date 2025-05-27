@@ -72,43 +72,32 @@ class DobotServerNode(Node):
         self.bridge = CvBridge()
         self.latest_frame = None
         
+    '''
+    joint1 : -135 ~ 125 (degree)
+    joint2 : -5 ~ 40 (degree)
+    joint3 : -15 ~ 80 (degree)
+    joint4 : 110 ~ 170 (degree)
+    '''
     def joint_callback(self, msg):
         dobot_status[3] = math.degrees(msg.position[0])
         dobot_status[4] = math.degrees(msg.position[1])
         dobot_status[5] = math.degrees(msg.position[2])
         dobot_status[6] = math.degrees(msg.position[3])
 
-        # self.get_logger().info(
-        #     f"Joint1: {dobot_status[3]:.2f} deg, "
-        #     f"Joint2: {dobot_status[4]:.2f} deg, "
-        #     f"Joint3: {dobot_status[5]:.2f} deg, "
-        #     f"Joint4: {dobot_status[6]:.2f} deg"
-        # )
-
-        '''
-        joint1 : -135 ~ 125 (degree)
-        joint2 : -5 ~ 40 (degree)
-        joint3 : -15 ~ 80 (degree)
-        joint4 : 110 ~ 170 (degree)
-        '''
         time.sleep(ROS_DELAY_INTERVAL)
 
-    # 완료
+    '''
+    Y : -100 ~ 320 (mm)
+    Y : -280 ~ 300 (mm)
+    Z : -130 ~ 113 (mm)
+    '''
     def tcp_callback(self, msg):
         pose = (msg.pose.position.x*1000, msg.pose.position.y*1000, msg.pose.position.z*1000)
         pose = add_offset(pose)
 
-        # self.get_logger().info(
-        #     f'TCP Pose: x={(pose[0]):.2f}, y={pose[1]:.2f}, z={pose[2]:.2f}'
-        # )
         dobot_status[0] = pose[0] # x
         dobot_status[1] = pose[1] # y
         dobot_status[2] = pose[2] # z
-        '''
-        Y : -100 ~ 320 (mm)
-        Y : -280 ~ 300 (mm)
-        Z : -130 ~ 113 (mm)
-        '''
 
         time.sleep(ROS_DELAY_INTERVAL)
 
@@ -122,8 +111,7 @@ class DobotServerNode(Node):
             cv_image = cv2.resize(cv_image, (cv_image.shape[1]//2, cv_image.shape[0]//2))
             with self.lock:
                 self.latest_frame = cv_image.copy()
-            # cv2.imshow("RealSense Color Stream", cv_image)
-            # cv2.waitKey(1)
+
         except Exception as e:
             self.get_logger().error(f"CV conversion failed: {e}")
         time.sleep(ROS_DELAY_INTERVAL)
@@ -142,46 +130,25 @@ class DobotServerNode(Node):
                 return jpeg.tobytes()
             return None
 
+@app.route('/camera/coordinate_board')
+def get_image():
+    global server_node
+    if server_node is None:
+        return Response("ROS2 node not initialized", status=500)
 
-# 프레임을 웹에 띄울 수 있게 인코딩
-def generate_stream():
-    while True:
-        image = server_node.get_jpeg_image()
-        if image is None:
-            # 아직 한 프레임도 안 들어왔으면 잠시 대기 후 loop 재시작
-            time.sleep(0.03)
-            continue
+    image = server_node.get_jpeg_image()
+    if image:
+        return Response(response=image, content_type='image/jpeg')
+    else:
+        return Response("No image available", status=404)
 
-        # 이 시점에서는 image가 bytes 타입(JPEG 데이터)이므로 안전하게 처리
-        try:
-            image_array = np.frombuffer(image, np.uint8)
-            frame = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-        except Exception as e:
-            print(f"[generate_stream] 디코딩 에러: {e}")
-            time.sleep(0.03)
-            continue
 
-        # frame이 유효하면 JPEG으로 다시 인코딩해서 yield
-        ret, jpeg = cv2.imencode('.jpg', frame)
-        if not ret:
-            # 인코딩 실패 시에도 잠시 대기
-            time.sleep(0.03)
-            continue
-
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
-        # time.sleep(1.0 / 30.0)
-
+                    
 # html 렌더링 (html, css, js 모두 렌더링됨)
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# 웹페이지에 받아온 프레임을 동영상으로 띄워줌
-@app.route('/video_feed')
-def video_feed():
-    return Response(generate_stream(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/status', methods=['GET'])
 def status():

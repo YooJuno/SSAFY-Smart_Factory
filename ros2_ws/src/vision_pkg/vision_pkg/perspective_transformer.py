@@ -72,8 +72,8 @@ class ImageTransformer(Node):
             )
 
             point = Point()
-            point.x = float(self.x)
-            point.y = float(self.y)
+            point.x = float(self.y)
+            point.y = float(self.x)
             point.z = 0.0
             self.publisher_point.publish(point)
 
@@ -113,8 +113,6 @@ class ImageTransformer(Node):
                 for j in range(1, 21):
                     y = int(j * height / 21)
                     cv2.line(warped_coordinate, (0, y), (width, y), (200, 50, 0), 1)
-
-                cv2.circle(warped_coordinate, (int(self.pix_x), int(self.pix_y)), 3, (0, 0, 255), 3)
 
                 cv2.imshow('Transformed_Coordinate', warped_coordinate)
                 cv2.imshow('Transformed_Conveyor', warped_conveyor)

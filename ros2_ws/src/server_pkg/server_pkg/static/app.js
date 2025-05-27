@@ -5,6 +5,10 @@ const SERVER_HOST = '192.168.110.114';
 const SERVER_PORT = 65432;
 const SERVER_URL  = `http://${SERVER_HOST}:${SERVER_PORT}`;
 
+let pollingTimerId = null;
+let lastObjectUrl = null;
+const FRAME_INTERVAL_MS = 33;
+
 document.addEventListener('DOMContentLoaded', () => {
   // ─── 1) 도넛 차트 인스턴스 배열 ───
   const charts = [];
@@ -84,6 +88,49 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     paused = true;
+  });
+
+
+  // ─── 2) 이미지 프레임을 갱신하는 함수 ───
+  async function updateCameraFrame() {
+    try {
+      // cache-busting을 위해 타임스탬프를 붙인다.
+      const url = `${SERVER_URL}/camera/coordinate_board?t=${Date.now()}`;
+
+      // fetch로 Blob 형태의 JPEG 이미지를 받아온 뒤 objectURL로 변환
+      const resp = await fetch(url, { cache: 'no-store' });
+      if (!resp.ok) {
+        console.warn('이미지 요청 실패:', resp.status);
+        return;
+      }
+
+      const blob = await resp.blob(); // JPEG Blob
+      const objectUrl = URL.createObjectURL(blob);
+
+      // 기존에 사용하던 objectURL이 있다면 해제
+      if (lastObjectUrl) {
+        URL.revokeObjectURL(lastObjectUrl);
+      }
+
+      // <img> 태그 src에 설정
+      imgElem.src = objectUrl;
+      lastObjectUrl = objectUrl;
+
+    } catch (err) {
+      console.error('카메라 프레임 업데이트 중 에러:', err);
+    }
+  }
+
+  // ─── 3) 폴링 시작 ───
+  // 처음 한 번 실행
+  updateCameraFrame();
+  // 그 뒤에 매 FRAME_INTERVAL_MS마다 업데이트
+  pollingTimerId = setInterval(updateCameraFrame, FRAME_INTERVAL_MS);
+
+  // ─── (선택) 페이지를 떠날 때 타이머와 URL 해제 ───
+  window.addEventListener('beforeunload', () => {
+    if (pollingTimerId) clearInterval(pollingTimerId);
+    if (lastObjectUrl) URL.revokeObjectURL(lastObjectUrl);
   });
 
   function showModal(text) {
