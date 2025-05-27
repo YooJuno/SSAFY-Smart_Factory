@@ -113,7 +113,7 @@ class ConveyorYoloNode(Node):
         # 현재 시간
         now = time.time()
         # 마지막 전송 이후 5초가 지났는지 확인
-        if now - self.last_sent_time < 8.0:
+        if now - self.last_sent_time < 10.0:
             return  # 5초가 지나지 않았다면 publish하지 않음!
         
         if detection_result.data != '':

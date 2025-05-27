@@ -1,31 +1,33 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Point
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 import time
 import json
-
-from openai import OpenAI
-
 
 import os
 from dotenv import load_dotenv
 
+load_dotenv(dotenv_path='.env.local')
+
+from openai import OpenAI
 client = OpenAI(
-    api_key = ''
+    api_key = 'sk-proj-GsbdPOxiDTDiFwopcpstT3BlbkFJKeqJCD48skZSLAeTKn16'
 )
 
 class TargetPublisher(Node):
     def __init__(self):
         super().__init__('chat_node')
-        self.publisher_ = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_pos = self.create_publisher(Point, '/target_pos', 10)
+        self.publisher_suction = self.create_publisher(Bool, '/working_suction', 10)
+        self.publisher_homing = self.create_publisher(String, '/go_home', 10)
         self.subscription = self.create_subscription(
             String,
             '/chat_input',
             self.user_input_callback,
             10
         )
-        self.get_logger().info('/chat_input 토픽에서 입력을 기다립니다.')
+        self.get_logger().info('/chat_input 토픽에서 입력을 기다리는 중')
 
     def user_input_callback(self, msg):
         user_input = msg.data
@@ -37,20 +39,38 @@ class TargetPublisher(Node):
             return
         
         for response in responses:
-            try:
-                x = response['x']
-                y = response['y']
-                z = response['z']
-            except Exception as e:
-                self.get_logger().error('좌표 파싱 오류')
-                continue
+            if response["cmd"] == "move":
+                try:
+                    x = response["xyz"]['x']
+                    y = response["xyz"]['y']
+                    z = response["xyz"]['z']
+                except Exception as e:
+                    self.get_logger().error('좌표 파싱 오류')
+                    continue
 
-            msg = Point()
-            msg.x = float(x)
-            msg.y = float(y)
-            msg.z = float(z)
-            self.publisher_.publish(msg)
-            self.get_logger().info(f'좌표 전송 완료: ({x}, {y}, {z})')
+                msg = Point()
+                msg.x = float(x)
+                msg.y = float(y)
+                msg.z = float(z)
+                self.publisher_pos.publish(msg)
+                self.get_logger().info(f'좌표 전송 완료: ({x}, {y}, {z})')
+            elif response["cmd"] == "suction":
+                try:
+                    is_suction = response["is_suction"]
+                    is_suction = bool(is_suction)
+                except Exception as e:
+                    self.get_logger().error('논리값 파싱 오류')
+                    continue
+                msg = Bool()
+                msg.data = is_suction
+                self.publisher_suction.publish(msg)
+                self.get_logger().info(f'suction 전송 완료: {is_suction}')
+            else:
+                msg = String()
+                msg.data = "homing"
+                self.publisher_homing.publish(msg)
+                self.get_logger().info(f'homing 전송 완료')
+
             time.sleep(2)
     
     def get_gpt_response(self, user_input):
@@ -59,16 +79,37 @@ class TargetPublisher(Node):
             Analyze the user's input and respond in JSON format.
 
             example)
-            [{
-                "x": {userinput},
-                "y": {userinput},
-                "z": {userinput}
-            },
-            {
-                "x": {userinput},
-                "y": {userinput},
-                "z": {userinput}
-            }, ...
+            [
+                {
+                    "cmd": "homing"
+                },
+                {
+                    "cmd": "move",
+                    "xyz": {
+                                "x": {userinput},
+                                "y": {userinput},
+                                "z": {userinput}
+                            }
+                },
+                {
+                    "cmd": "suction",
+                    "is_suction": 1
+                },
+                {
+                    "cmd": "move",
+                    "xyz": {
+                                "x": {userinput},
+                                "y": {userinput},
+                                "z": {userinput}
+                            }
+                },
+                {
+                    "cmd": "suction",
+                    "is_suction": 0
+                }, 
+                {
+                    "cmd": "homing"
+                }, ...
             ]
             
             You must not add anything other than JSON format (such as comments) to your response so that it can be parsed by a JSON parser in Python.
@@ -84,8 +125,7 @@ class TargetPublisher(Node):
             }
         ]
         response = client.responses.create(
-            # model="gpt-4.1-nano",
-            model='gpt-4o-mini',
+            model="gpt-4.1-nano",
             input=messages
         )
 
@@ -102,10 +142,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
-
-'''
-input ex
-
-y는 250, x는 0, z는 30으로 가게 해줘 그리고 y는 250, x는 100, z는 30으로 가게 해줘
-'''
