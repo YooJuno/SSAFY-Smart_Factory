@@ -36,7 +36,7 @@ def generate_launch_description():
 
         Node(
             package='dobot_pkg',
-            executable='dobot_target_follower_node',
+            executable='dobot_controller_node',
             output='screen'
         ),
 

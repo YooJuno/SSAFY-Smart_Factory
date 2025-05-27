@@ -24,7 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'dobot_homing_service_node = dobot_pkg.homing:main',
-            'dobot_target_follower_node = dobot_pkg.target_follower:main'
+            'dobot_controller_node = dobot_pkg.target_follower:main'
         ],
     },
 )

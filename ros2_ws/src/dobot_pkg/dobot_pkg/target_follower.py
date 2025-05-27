@@ -23,7 +23,7 @@ def add_offset(x, y, z):
 
 class TargetFollower(Node):
     def __init__(self):
-        super().__init__('dobot_target_follower_node')
+        super().__init__('dobot_controller_node')
         self.group = ReentrantCallbackGroup()
 
         # Action client for movement
