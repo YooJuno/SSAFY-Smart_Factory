@@ -143,8 +143,7 @@ main > .left-section > .chart-wrapper {
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
     justify-content: center;
-    /* margin: 0; */
-    margin-bottom: 7rem;
+    margin: 0;
 }
 
 main > .left-section > .chart-wrapper > .chart {
