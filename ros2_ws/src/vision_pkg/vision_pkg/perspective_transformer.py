@@ -9,7 +9,7 @@ import time
 
 class ImageTransformer(Node):
     def __init__(self):
-        super().__init__('perspective_transformer_node')
+        super().__init__('vision_node')
         self.bridge = CvBridge()
 
         self.subscription = self.create_subscription(
