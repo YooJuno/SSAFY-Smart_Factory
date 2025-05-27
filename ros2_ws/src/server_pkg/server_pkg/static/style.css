@@ -28,7 +28,7 @@ header {
 }
 
 main {
-    flex: 8;
+    flex: 11;
     width: 75%;
     min-height: 0;
 }
@@ -165,7 +165,7 @@ main > .left-section > .controller-wrapper {
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    margin-top: 1.5rem;
+    margin-top: 5.5rem;
 }
 
 main > .left-section > .controller-wrapper > .slider-wrapper {

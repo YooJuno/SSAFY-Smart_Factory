@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   fetchStatusAndUpdate();
-  setInterval(fetchStatusAndUpdate, 500);
+  setInterval(fetchStatusAndUpdate, 100);
 
   sliderX.addEventListener('input', () => valueX.textContent = sliderX.value);
   sliderY.addEventListener('input', () => valueY.textContent = sliderY.value);

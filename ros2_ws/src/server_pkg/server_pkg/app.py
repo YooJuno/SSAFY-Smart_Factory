@@ -168,7 +168,7 @@ def status():
 # 사용자가 x, y, z, suction_cup 값 지정 후 send 버튼 누름 -> app.js에서 값을 받아옴
 @app.route('/send', methods=['POST'])
 def receive_controls():
-    global server_node
+    global server_node, is_suction_working
     data = request.get_json()
 
     point = Point()
@@ -178,6 +178,7 @@ def receive_controls():
 
     suction_working = Bool()
     suction_working.data = data.get('suction')
+    is_suction_working = suction_working.data
 
     server_node.publisher_point.publish(point)
     server_node.publisher_suction.publish(suction_working)
