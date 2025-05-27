@@ -44,7 +44,7 @@ DOBOT, RealSense D435i, Server를 ROS2 System에서 관리
     - **/conv_space_image** topic을 구독하여 컨베이어 벨트 위의 객체를 인식 및 색 검출
 
 **[ vision_pkg ]**
-  - **/perspective_transformer_node**
+  - **/vision_node**
     - realsense camera의 /camera/camera/color/image_raw 토픽을 구독하여 OpenCV Mat으로 변환
     - **Perspective Transformation**을 수행하여 원근을 제거한 Coordinate Board 이미지를 생성. 
 

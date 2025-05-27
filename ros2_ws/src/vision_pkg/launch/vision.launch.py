@@ -19,7 +19,7 @@ def generate_launch_description():
 
         Node(
             package='vision_pkg',
-            executable='perspective_transformer_node',
+            executable='vision_node',
             output='screen'
         ),
     ])

@@ -106,13 +106,13 @@ class ImageTransformer(Node):
                 warped_conveyor = warped_coordinate.copy()[55:340, 40:700]
 
                 # 파란색 그리드 (가로 29칸, 세로 21칸)
-                for i in range(1, 29):
-                    x = int(i * width / 29)
-                    cv2.line(warped_coordinate, (x, 0), (x, height), (200, 50, 0), 1)
+                # for i in range(1, 29):
+                #     x = int(i * width / 29)
+                #     cv2.line(warped_coordinate, (x, 0), (x, height), (200, 50, 0), 1)
 
-                for j in range(1, 21):
-                    y = int(j * height / 21)
-                    cv2.line(warped_coordinate, (0, y), (width, y), (200, 50, 0), 1)
+                # for j in range(1, 21):
+                #     y = int(j * height / 21)
+                #     cv2.line(warped_coordinate, (0, y), (width, y), (200, 50, 0), 1)
 
                 cv2.imshow('Transformed_Coordinate', warped_coordinate)
                 cv2.imshow('Transformed_Conveyor', warped_conveyor)
